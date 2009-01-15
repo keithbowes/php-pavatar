@@ -8,7 +8,7 @@ class pavatar_plugin extends Plugin
 
   var $author = 'http://sourceforge.net/projects/pavatar';
   var $name = 'Pavatar';
-  var $version = '0.3';
+  var $version = '0.1';
 
   var $apply_rendering = 'always';
   var $group = 'rendering';

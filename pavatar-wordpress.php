@@ -16,10 +16,15 @@ function _pavatar_init()
   @mkdir($_pavatar_cache_dir);
 }
 
-function _pavatar_wordpress_give_avatar($avatar)
+function _pavatar_wordpress_give_avatar()
 {
+  global $comment;
+
   $in = '';
-  _pavatar_getPavatarCode(get_the_author_url(), &$in);
+  if (!$url = $comment->comment_author_url)
+    $url = get_the_author_url();
+
+  _pavatar_getPavatarCode($url, &$in);
   return $in;
 }
 

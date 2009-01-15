@@ -1,7 +1,5 @@
 <?php
 
-
-
 $_pavatar_use_pavatar = true;
 
 $_pavatar_cache_dir;
@@ -9,18 +7,17 @@ $_pavatar_cache_file;
 
 function _pavatar_getDefaultUrl()
 {
-  return '';
+  return 'http://www.pavatar.com/';
 }
 
 function _pavatar_getDirectUrl($url, & $exists)
 {
   $sep = substr($url, -1, 1) == '/' ? '' : '/';
   $_url = $url . $sep . 'pavatar.png';
-  $_url = str_replace(':/', '/', $_url);
 
   $headers = get_headers($_url);
 
-  $exists = (strstr($headers[0], 404) === FALSE);
+  $exists = (strstr($headers[0], '404') === FALSE);
 
   return $_url;
 }
@@ -79,11 +76,14 @@ function _pavatar_getPavatarFrom($url)
     if (!$exists)
     {
       $urlp = parse_url($url);
-      $url = $urlp['scheme'] . '://' . $urlp['host'] . ':' . $urlp['port'];
+      if ($urlp['port'])
+        $port = ':' . $urlp['port'];
+
+      $url = $urlp['scheme'] . '://' . $urlp['host'] . $port;
       $_url = _pavatar_getDirectUrl($url, &$exists);
 
       if (!$exists)
-        $_url = 'none';
+        $_url = _pavatar_getSrcFrom(_pavatar_getDefaultUrl());
     }
   }
 
@@ -116,7 +116,7 @@ function _pavatar_getSrcFrom($url)
     $ret = "data:$s";
 
     if (!$s)
-      $image = 'none';
+      $image = _pavatar_getDefaultUrl();
   }
   else
   {
