@@ -22,13 +22,12 @@ function _pavatar_getDirectUrl($url, & $exists)
   return $_url;
 }
 
-function _pavatar_getPavatarCode($url, & $content)
+function _pavatar_getPavatarCode($url, $content = '')
 {
   global $_pavatar_use_pavatar;
 
   $img = '<img src="' . _pavatar_getSrcFrom($url) . '" alt="" class="pavatar" />' . $content;
-  if ($_pavatar_use_pavatar)
-    $content = $img;
+  return $_pavatar_use_pavatar ? $img : $content;
 }
 
 function _pavatar_getPavatarFrom($url)
@@ -94,7 +93,11 @@ function _pavatar_getSrcFrom($url)
 {
   global $_pavatar_cache_dir, $_pavatar_cache_file, $_pavatar_use_pavatar;
 
+  $_pavatar_cache_dir = dirname(__FILE__) . '/cache';
   $_pavatar_cache_file = $_pavatar_cache_dir . '/' . rawurlencode($url);
+
+  if (!is_dir($_pavatar_cache_dir))
+    @mkdir($_pavatar_cache_dir);
 
   $image = '';
 
