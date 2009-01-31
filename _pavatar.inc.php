@@ -27,7 +27,7 @@ function _pavatar_cleanFiles()
     $file = $_pavatar_cache_dir . '/' . $files[$i];
     $lm = filemtime($file); // Get the last-modified timestamp
 
-    if ($lm < time() - $week_seconds) // Older than a week
+    if (is_file($file) && $lm < time() - $week_seconds) // Older than a week
       unlink($file);
   }
 }
@@ -206,10 +206,28 @@ function _pavatar_setCacheDir($url = '')
 
   $_pavatar_cache_dir = '_pavatar_cache';
 
+  $old_cache_dir = dirname(__FILE__) . '/cache';
+
   if (!is_dir($_pavatar_cache_dir))
   {
     @mkdir($_pavatar_cache_dir);
     chown($_pavatar_cache_dir, get_current_user());
+  }
+
+  /* Convert a 0.2 cache into a 0.3 cache */
+  if (is_dir($old_cache_dir))
+  {
+    $files = scandir($old_cache_dir);
+    $filec = count($files);
+
+    for ($i = 0; $i < $filec; $i++)
+    {
+      $file = $old_cache_dir . '/' . $files[$i];
+      if (is_file($file) && rawurldecode($file) != $file)
+        rename($file, $_pavatar_cache_dir . '/' . base64_encode(rawurldecode($file)));
+    }
+
+    rmdir($old_cache_dir);
   }
 
   if ($url)
