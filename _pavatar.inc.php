@@ -9,6 +9,29 @@ $_pavatar_mime_type;
 
 $_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE');
 
+function _pavatar_cleanFiles()
+{
+  global $_pavatar_cache_dir;
+  $week_seconds = 7 * 24 * 60 * 60;
+
+  if (! $_pavatar_cache_dir)
+    _pavatar_setCacheDir();
+
+  $files = scandir($_pavatar_cache_dir);
+  $fc = count($files);
+
+  for ($i = 0; $i < $fc; $i++)
+  {
+    $file = $_pavatar_cache_dir . '/' . $files[$i];
+    $lm = filemtime($file); // Get the last-modified timestamp
+    if ($lm < time() - $week_seconds)
+    {
+      echo "<!-- Deleting $file -->";
+      unlink($file);
+    }
+  }
+}
+
 function _pavatar_getDefaultUrl()
 {
   return 'http://www.pavatar.com/';
@@ -117,14 +140,8 @@ function _pavatar_getPavatarFrom($url)
 
 function _pavatar_getSrcFrom($url)
 {
-  global $_pavatar_cache_dir, $_pavatar_cache_file,
-    $_pavatar_is_ie, $_pavatar_mime_type, $_pavatar_use_pavatar;
-
-  $_pavatar_cache_dir = dirname(__FILE__) . '/cache';
-  $_pavatar_cache_file = $_pavatar_cache_dir . '/' . rawurlencode($url);
-
-  if (!is_dir($_pavatar_cache_dir))
-    @mkdir($_pavatar_cache_dir);
+  global $_pavatar_cache_file, $_pavatar_is_ie,
+    $_pavatar_mime_type, $_pavatar_use_pavatar;
 
   $image = '';
 
@@ -171,6 +188,19 @@ function _pavatar_getSrcFrom($url)
   $_pavatar_use_pavatar = strtolower($ret) != 'none';
 
   return $ret;
+}
+
+function _pavatar_setCacheDir($url = '')
+{
+  global $_pavatar_cache_dir, $_pavatar_cache_file;
+
+  $_pavatar_cache_dir = dirname(__FILE__) . '/cache';
+
+  if (!is_dir($_pavatar_cache_dir))
+    @mkdir($_pavatar_cache_dir);
+
+  if ($url)
+    $_pavatar_cache_file = $_pavatar_cache_dir . '/' . rawurlencode($url);
 }
 
 ?>

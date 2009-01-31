@@ -28,6 +28,8 @@ class pavatar_plugin extends Plugin
     if (!$url)
       $url = _pavatar_getDefaultUrl();
 
+    _pavatar_setCacheDir($url);
+
     $content = _pavatar_getPavatarCode($url, $content);
   }
 
@@ -43,7 +45,14 @@ class pavatar_plugin extends Plugin
     if (!$url)
       $url = _pavatar_getDefaultUrl();
 
+    _pavatar_setCacheDir($url);
+
     $content = _pavatar_getPavatarCode($url, $content);
+  }
+
+  function SkinEndHtmlBody(& $params)
+  {
+    _pavatar_cleanFiles();
   }
 
   function AdminAfterMenuInit()
