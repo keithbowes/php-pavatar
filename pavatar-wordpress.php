@@ -18,10 +18,9 @@ function _pavatar_wordpress_give_avatar()
   else
     $url = get_the_author_url();
 
-  _pavatar_cleanFiles();
-
   return _pavatar_getPavatarCode($url);
 }
 
-_pavatar_init();
+add_action('wp_footer', '_pavatar_cleanFiles');
+
 add_filter('get_avatar', '_pavatar_wordpress_give_avatar');

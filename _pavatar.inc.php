@@ -5,6 +5,8 @@ $_pavatar_use_pavatar = true;
 $_pavatar_cache_dir;
 $_pavatar_cache_file;
 
+$_pavatar_base_offset;
+
 $_pavatar_mime_type;
 
 $_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE');
@@ -24,11 +26,9 @@ function _pavatar_cleanFiles()
   {
     $file = $_pavatar_cache_dir . '/' . $files[$i];
     $lm = filemtime($file); // Get the last-modified timestamp
-    if ($lm < time() - $week_seconds)
-    {
-      echo "<!-- Deleting $file -->";
+
+    if ($lm < time() - $week_seconds) // Older than a week
       unlink($file);
-    }
   }
 }
 
@@ -47,6 +47,24 @@ function _pavatar_getDirectUrl($url, & $exists)
   $exists = (strstr($headers[0], '404') === FALSE);
 
   return $_url;
+}
+
+function _pavatar_getHeaders($url)
+{
+  $ret = NULL;
+
+  $headers = get_headers($url);
+  $headerc = count((array) $headers);
+
+  for ($i = 0; $i < $headerc; $i++)
+  {
+    $ci = strpos($headers[$i], ':');
+    $headn = strtolower(substr($headers[$i], 0, $ci));
+    $headv = ltrim(substr($headers[$i], $ci + 1));
+    $ret[$headn] = $headv;
+  }
+
+  return $ret;
 }
 
 function _pavatar_getMimeType($s)
@@ -83,23 +101,8 @@ function _pavatar_getPavatarFrom($url)
 
   if ($url)
   {
-    $headers = get_headers($url);
-    $headerc = count((array) $headers);
-
-    for ($i = 0; $i < $headerc; $i++)
-    {
-      $ci = strpos($headers[$i], ':');
-      $headn = strtolower(substr($headers[$i], 0, $ci));
-      $headv = ltrim(substr($headers[$i], $ci + 1));
-
-      if ($headn == 'x-pavatar' && $_pavatar_mime_type)
-      {
-        $_url = $headv;
-        break;
-      }
-      else if ($headn == 'content-type')
-        $_pavatar_mime_type = $headv;
-    }
+    $headers = _pavatar_getHeaders($url);
+    $_url = @$headers['x-pavatar'];
   }
   else
     $_url = 'none';
@@ -140,14 +143,18 @@ function _pavatar_getPavatarFrom($url)
 
 function _pavatar_getSrcFrom($url)
 {
-  global $_pavatar_cache_file, $_pavatar_is_ie,
-    $_pavatar_mime_type, $_pavatar_use_pavatar;
+  global $_pavatar_base_offset, $_pavatar_cache_dir,
+    $_pavatar_cache_file, $_pavatar_is_ie, $_pavatar_mime_type,
+    $_pavatar_use_pavatar;
 
   $image = '';
 
   if (!file_exists($_pavatar_cache_file))
   {
     $image = _pavatar_getPavatarFrom($url);
+    $headers = _pavatar_getHeaders($image);
+    $_pavatar_mime_type = @$headers['content-type'];
+
     switch ($_pavatar_mime_type)
     {
       case 'image/gif':
@@ -162,6 +169,9 @@ function _pavatar_getSrcFrom($url)
     $f = @fopen($_pavatar_cache_file, 'w');
     @fwrite($f, $c);
     @fclose($f);
+
+    chown($_pavatar_cache_file, get_current_user());
+    chmod($_pavatar_cache_file, 0755);
   }
 
   if (file_exists($_pavatar_cache_file))
@@ -169,7 +179,7 @@ function _pavatar_getSrcFrom($url)
     $s = file_get_contents($_pavatar_cache_file);
 
     if ($_pavatar_mime_type = _pavatar_getMimeType($s))
-      $ret = $_pavatar_cache_file;
+      $ret = $_pavatar_base_offset . $_pavatar_cache_file;
     else if (base64_decode($s) !== FALSE) // Older versions used base64-encoded data URLs
     {
       $_pavatar_mime_type = substr($s, 0, strpos($s, ';'));
@@ -194,13 +204,16 @@ function _pavatar_setCacheDir($url = '')
 {
   global $_pavatar_cache_dir, $_pavatar_cache_file;
 
-  $_pavatar_cache_dir = dirname(__FILE__) . '/cache';
+  $_pavatar_cache_dir = '_pavatar_cache';
 
   if (!is_dir($_pavatar_cache_dir))
+  {
     @mkdir($_pavatar_cache_dir);
+    chown($_pavatar_cache_dir, get_current_user());
+  }
 
   if ($url)
-    $_pavatar_cache_file = $_pavatar_cache_dir . '/' . rawurlencode($url);
+    $_pavatar_cache_file = $_pavatar_cache_dir . '/' . base64_encode($url);
 }
 
 ?>

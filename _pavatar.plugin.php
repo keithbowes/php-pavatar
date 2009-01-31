@@ -15,6 +15,9 @@ class pavatar_plugin extends Plugin
 
   function PluginInit()
   {
+    global $_pavatar_base_offset;
+    $_pavatar_base_offset = '../../';
+
     $this->shortdesc = $this->T_('Implements Pavatar support.');
     $this->longdesc = $this->T_('Displays Pavatars in your entries and comments without having to mess around with PHP.');
   }
