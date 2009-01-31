@@ -5,6 +5,10 @@ $_pavatar_use_pavatar = true;
 $_pavatar_cache_dir;
 $_pavatar_cache_file;
 
+$_pavatar_mime_type;
+
+$_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE');
+
 function _pavatar_getDefaultUrl()
 {
   return 'http://www.pavatar.com/';
@@ -22,16 +26,36 @@ function _pavatar_getDirectUrl($url, & $exists)
   return $_url;
 }
 
+function _pavatar_getMimeType($s)
+{
+  $_pavatar_mime_type = '';
+
+  if (strstr($s, 'PNG'))
+    $_pavatar_mime_type = 'image/png';
+  else if (strstr($s, 'JFIF'))
+    $_pavatar_mime_type = 'image/jpeg';
+  else if (strstr($s, 'GIF'))
+    $_pavatar_mime_type = 'image/gif';
+
+  return $_pavatar_mime_type;
+}
+
 function _pavatar_getPavatarCode($url, $content = '')
 {
-  global $_pavatar_use_pavatar;
+  global $_pavatar_is_ie, $_pavatar_mime_type, $_pavatar_use_pavatar;
 
-  $img = '<img src="' . _pavatar_getSrcFrom($url) . '" alt="" class="pavatar" />' . $content;
+  if (!$_pavatar_is_ie)
+    $img = '<object data="' . _pavatar_getSrcFrom($url) . '" type="' . $_pavatar_mime_type . '" alt="" class="pavatar">' . '</object>' . "\n" . $content;
+  else
+    $img = '<img src="' . _pavatar_getSrcFrom($url) . '" alt="" class="pavatar" />' . $content;
+
   return $_pavatar_use_pavatar ? $img : $content;
 }
 
 function _pavatar_getPavatarFrom($url)
 {
+  global $_pavatar_mime_type;
+
   $_url = '';
 
   if ($url)
@@ -45,11 +69,13 @@ function _pavatar_getPavatarFrom($url)
       $headn = strtolower(substr($headers[$i], 0, $ci));
       $headv = ltrim(substr($headers[$i], $ci + 1));
 
-      if ($headn == 'x-pavatar')
+      if ($headn == 'x-pavatar' && $_pavatar_mime_type)
       {
         $_url = $headv;
         break;
       }
+      else if ($headn == 'content-type')
+        $_pavatar_mime_type = $headv;
     }
   }
   else
@@ -91,7 +117,8 @@ function _pavatar_getPavatarFrom($url)
 
 function _pavatar_getSrcFrom($url)
 {
-  global $_pavatar_cache_dir, $_pavatar_cache_file, $_pavatar_use_pavatar;
+  global $_pavatar_cache_dir, $_pavatar_cache_file,
+    $_pavatar_is_ie, $_pavatar_mime_type, $_pavatar_use_pavatar;
 
   $_pavatar_cache_dir = dirname(__FILE__) . '/cache';
   $_pavatar_cache_file = $_pavatar_cache_dir . '/' . rawurlencode($url);
@@ -104,30 +131,44 @@ function _pavatar_getSrcFrom($url)
   if (!file_exists($_pavatar_cache_file))
   {
     $image = _pavatar_getPavatarFrom($url);
-    $c = @file_get_contents($image);
-    $i = "$_pavatar_mime_type;base64," . base64_encode($c);
+    switch ($_pavatar_mime_type)
+    {
+      case 'image/gif':
+      case 'image/jpeg':
+      case 'image/png':
+        $c = @file_get_contents($image);
+        break;
+      default:
+        $c = (!$_pavatar_is_ie) ? "$_pavatar_mime_type;base64," . base64_encode(@file_get_contents($image)) : $image;
+    }
 
     $f = @fopen($_pavatar_cache_file, 'w');
-    @fwrite($f, $i);
+    @fwrite($f, $c);
     @fclose($f);
   }
 
-  if (file_exists($_pavatar_cache_file) &&
-    !strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE')) // IE doesn't support data: URIs
+  if (file_exists($_pavatar_cache_file))
   {
     $s = file_get_contents($_pavatar_cache_file);
-    $ret = "data:$s";
+
+    if ($_pavatar_mime_type = _pavatar_getMimeType($s))
+      $ret = $_pavatar_cache_file;
+    else if (base64_decode($s) !== FALSE) // Older versions used base64-encoded data URLs
+    {
+      $_pavatar_mime_type = substr($s, 0, strpos($s, ';'));
+      if (!$_pavatar_mime_type)
+        $_pavatar_mime_type = 'image/png';
+
+      $ret="data:$s";
+    }
+    else
+      $ret = _pavatar_getPavatarFrom($s);
 
     if (!$s)
-      $image = _pavatar_getDefaultUrl();
-  }
-  else
-  {
-    $ret = _pavatar_getSrcFrom($url);
-    $image = $ret;
+      $ret = _pavatar_getDefaultUrl();
   }
 
-  $_pavatar_use_pavatar = strtolower($image) != 'none';
+  $_pavatar_use_pavatar = strtolower($ret) != 'none';
 
   return $ret;
 }
