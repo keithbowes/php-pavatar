@@ -9,6 +9,9 @@ $_pavatar_base_offset;
 
 $_pavatar_mime_type;
 
+$_pavatar_email;
+$_pavatar_use_gravatar;
+
 $_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE');
 
 function _pavatar_cleanFiles()
@@ -53,7 +56,7 @@ function _pavatar_getHeaders($url)
 {
   $ret = NULL;
 
-  $headers = get_headers($url);
+  $headers = @get_headers($url);
   $headerc = count((array) $headers);
 
   for ($i = 0; $i < $headerc; $i++)
@@ -95,7 +98,7 @@ function _pavatar_getPavatarCode($url, $content = '')
 
 function _pavatar_getPavatarFrom($url)
 {
-  global $_pavatar_mime_type;
+  global $_pavatar_email, $_pavatar_mime_type, $_pavatar_use_gravatar;
 
   $_url = '';
 
@@ -134,7 +137,10 @@ function _pavatar_getPavatarFrom($url)
       $_url = _pavatar_getDirectUrl($url, &$exists);
 
       if (!$exists)
-        $_url = _pavatar_getSrcFrom(_pavatar_getDefaultUrl());
+        if (!$_pavatar_use_gravatar)
+          $_url = _pavatar_getSrcFrom(_pavatar_getDefaultUrl());
+        else
+          $_url = 'http://www.gravatar.com/avatar/' . md5($_pavatar_email) . '?s=80&amp;d=' . rawurlencode('http://www.gravatar.com/avatar');
     }
   }
 

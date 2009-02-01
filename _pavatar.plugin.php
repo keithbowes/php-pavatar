@@ -6,17 +6,20 @@ class pavatar_plugin extends Plugin
 {
   var $code = 'b2evPava';
 
-  var $author = 'http://sourceforge.net/projects/pavatar';
+  var $author = 'http://kechjo.cogia.net/';
+  var $help_url = 'http://pavatar.sourceforge.net/';
+
   var $name = 'Pavatar';
   var $version = '0.3';
 
-  var $apply_rendering = 'always';
+  var $apply_rendering = 'stealth';
   var $group = 'rendering';
 
   function PluginInit()
   {
-    global $_pavatar_base_offset;
+    global $_pavatar_base_offset, $_pavatar_use_gravatar;
     $_pavatar_base_offset = '../../';
+    $_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
 
     $this->shortdesc = $this->T_('Implements Pavatar support.');
     $this->longdesc = $this->T_('Displays Pavatars in your entries and comments without having to mess around with PHP.');
@@ -24,29 +27,35 @@ class pavatar_plugin extends Plugin
 
   function RenderItemAsHtml(& $params)
   {
+    global $_pavatar_email;
+
     $content =& $params['data'];
     $item = $params['Item'];
 
     $url = $item->get_creator_User()->url;
-    if (!$url)
-      $url = _pavatar_getDefaultUrl();
 
     _pavatar_setCacheDir($url);
+
+    $_pavatar_email = $item->get_creator_User()->email;
 
     $content = _pavatar_getPavatarCode($url, $content);
   }
 
   function FilterCommentContent(& $params)
   {
+    global $_pavatar_email;
+
     $content =& $params['data'];
     $comment = $params['Comment'];
 
     $url = $comment->author_url;
-    if (!$url && $comment->get_author_user()) // if member
-      $url = $comment->get_author_user()->url;
+    $_pavatar_email = $comment->author_email;
 
-    if (!$url)
-      $url = _pavatar_getDefaultUrl();
+    if (!$url && $comment->get_author_user()) // if member
+    {
+      $url = $comment->get_author_user()->url;
+      $_pavatar_email = $comment->get_author_user()->email;
+    }
 
     _pavatar_setCacheDir($url);
 
@@ -58,9 +67,16 @@ class pavatar_plugin extends Plugin
     _pavatar_cleanFiles();
   }
 
-  function AdminAfterMenuInit()
+  function GetDefaultSettings(& $params)
   {
-    //$this->register_menu_entry($this->T_('Pavatar'));
+    /* Using a variable for conditional returns */
+    $ret['use_gravatar'] = array(
+        'label' => $this->T_('Use Gravatar: '),
+        'type' => 'checkbox',
+        'defaultvalue' => 0,
+        'note' => $this->T_('for comment authors who don\'t have a Pavatar'));
+
+    return $ret;
   }
 }
 
