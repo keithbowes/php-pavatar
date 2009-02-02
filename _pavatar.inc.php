@@ -12,7 +12,7 @@ $_pavatar_mime_type;
 $_pavatar_email;
 $_pavatar_use_gravatar;
 
-$_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE');
+$_pavatar_is_ie;
 
 function _pavatar_cleanFiles()
 {
@@ -20,7 +20,7 @@ function _pavatar_cleanFiles()
   $week_seconds = 7 * 24 * 60 * 60;
 
   if (! $_pavatar_cache_dir)
-    _pavatar_setCacheDir();
+    _pavatar_init();
 
   $files = scandir($_pavatar_cache_dir);
   $fc = count($files);
@@ -89,7 +89,7 @@ function _pavatar_getPavatarCode($url, $content = '')
   global $_pavatar_is_ie, $_pavatar_mime_type, $_pavatar_use_pavatar;
 
   if (!$_pavatar_is_ie)
-    $img = '<object data="' . _pavatar_getSrcFrom($url) . '" type="' . $_pavatar_mime_type . '" alt="" class="pavatar">' . '</object>' . "\n" . $content;
+    $img = '<object data="' . _pavatar_getSrcFrom($url) . '" type="' . $_pavatar_mime_type . '" class="pavatar"></object>' . "\n" . $content;
   else
     $img = '<img src="' . _pavatar_getSrcFrom($url) . '" alt="" class="pavatar" />' . $content;
 
@@ -206,9 +206,9 @@ function _pavatar_getSrcFrom($url)
   return $ret;
 }
 
-function _pavatar_setCacheDir($url = '')
+function _pavatar_init($url = '')
 {
-  global $_pavatar_cache_dir, $_pavatar_cache_file;
+  global $_pavatar_cache_dir, $_pavatar_cache_file, $_pavatar_is_ie;
 
   $_pavatar_cache_dir = '_pavatar_cache';
 
@@ -238,6 +238,8 @@ function _pavatar_setCacheDir($url = '')
 
   if ($url)
     $_pavatar_cache_file = $_pavatar_cache_dir . '/' . base64_encode($url);
+
+  $_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE');
 }
 
 ?>

@@ -12,20 +12,20 @@ class pavatar_plugin extends Plugin
   var $name = 'Pavatar';
   var $version = '0.3';
 
-  var $apply_rendering = 'stealth';
+  var $apply_rendering = 'always';
   var $group = 'rendering';
 
   function PluginInit()
   {
-    global $_pavatar_base_offset, $_pavatar_use_gravatar;
-    $_pavatar_base_offset = '../../';
+    global $baseurl, $_pavatar_base_offset, $_pavatar_use_gravatar;
+    $_pavatar_base_offset = $baseurl;
     $_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
 
     $this->shortdesc = $this->T_('Implements Pavatar support.');
     $this->longdesc = $this->T_('Displays Pavatars in your entries and comments without having to mess around with PHP.');
   }
 
-  function RenderItemAsHtml(& $params)
+  function DisplayItemAsHtml(& $params)
   {
     global $_pavatar_email;
 
@@ -34,7 +34,7 @@ class pavatar_plugin extends Plugin
 
     $url = $item->get_creator_User()->url;
 
-    _pavatar_setCacheDir($url);
+    _pavatar_init($url);
 
     $_pavatar_email = $item->get_creator_User()->email;
 
@@ -57,7 +57,7 @@ class pavatar_plugin extends Plugin
       $_pavatar_email = $comment->get_author_user()->email;
     }
 
-    _pavatar_setCacheDir($url);
+    _pavatar_init($url);
 
     $content = _pavatar_getPavatarCode($url, $content);
   }

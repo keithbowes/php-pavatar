@@ -24,7 +24,7 @@ function _pavatar_wordpress_give_avatar()
     $_pavatar_email = get_the_author_email();
   }
 
-  _pavatar_setCacheDir($url);
+  _pavatar_init($url);
 
   return _pavatar_getPavatarCode($url);
 }
