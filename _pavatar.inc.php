@@ -113,7 +113,7 @@ function _pavatar_getPavatarFrom($url)
   if (!$_url)
   {
     $dom = new DOMDocument();
-    $dom->loadHTML(file_get_contents($url));
+    $dom->loadHTML(_pavatar_getUrlContents($url));
     $links = $dom->getElementsByTagName('link');
 
     for ($i = 0; $i < $links->length; $i++)
@@ -160,16 +160,17 @@ function _pavatar_getSrcFrom($url)
     $image = _pavatar_getPavatarFrom($url);
     $headers = _pavatar_getHeaders($image);
     $_pavatar_mime_type = @$headers['content-type'];
+    echo "$image";
 
     switch ($_pavatar_mime_type)
     {
       case 'image/gif':
       case 'image/jpeg':
       case 'image/png':
-        $c = @file_get_contents($image);
+        $c = _pavatar_getUrlContents($image);
         break;
       default:
-        $c = (!$_pavatar_is_ie) ? "$_pavatar_mime_type;base64," . base64_encode(@file_get_contents($image)) : $image;
+        $c = (!$_pavatar_is_ie) ? "$_pavatar_mime_type;base64," . base64_encode(_pavatar_getUrlContents($image)) : $image;
     }
 
     $f = @fopen($_pavatar_cache_file, 'w');
@@ -203,6 +204,36 @@ function _pavatar_getSrcFrom($url)
 
   $_pavatar_use_pavatar = strtolower($ret) != 'none';
 
+  return $ret;
+}
+
+function _pavatar_getUrlContents($url)
+{
+  $in_headers = true;
+  $ret = '';
+
+  $urlp = parse_url($url);
+  if (empty($urlp['port']))
+    $urlp['port'] = 80;
+
+  $fh = fsockopen($urlp['host'], $urlp['port']);
+  fwrite($fh, 'GET ' . $urlp['path'] . ' HTTP/1.1' . "\r\n");
+  fwrite($fh, 'Host: ' . $urlp['host'] . "\r\n");
+  fwrite($fh, "Connection: close\r\n");
+  fwrite($fh, "\r\n");
+
+  while (!feof($fh))
+  {
+    if ($in_headers || !trim($ret))
+      $ret = '';
+
+    $ret .= fgets($fh);
+
+    if (!trim($ret))
+      $in_headers = false;
+  }
+
+  fclose($fh);
   return $ret;
 }
 
