@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: Pavatar
-Version: 0.3
+Version: @VERSION@
 Description: Displays a Pavatar avatar anywhere that get_avatar() is used (contact your theme's author if your theme lacks support).
 Plugin URI: http://sourceforge.net/projects/pavatar
  */
@@ -24,14 +24,16 @@ function _pavatar_wordpress_give_avatar()
     $_pavatar_email = get_the_author_email();
   }
 
-  _pavatar_init($url);
-
   return _pavatar_getPavatarCode($url);
 }
 
 function _pavatar_wordpress_init()
 {
-  global $_pavatar_use_gravatar;
+  global $_pavatar_ui_name, $_pavatar_ui_version,
+    $_pavatar_use_gravatar, $wp_version;
+
+  $_pavatar_ui_name = 'WordPress';
+  $_pavatar_ui_version = $wp_version;
   $_pavatar_use_gravatar = true;
 }
 

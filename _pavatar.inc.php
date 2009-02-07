@@ -14,6 +14,10 @@ $_pavatar_use_gravatar;
 
 $_pavatar_is_ie;
 
+$_pavatar_version;
+$_pavatar_ui_name;
+$_pavatar_ui_version;
+
 function _pavatar_cleanFiles()
 {
   global $_pavatar_cache_dir;
@@ -88,6 +92,8 @@ function _pavatar_getPavatarCode($url, $content = '')
 {
   global $_pavatar_is_ie, $_pavatar_mime_type, $_pavatar_use_pavatar;
 
+  _pavatar_init($url);
+
   if (!$_pavatar_is_ie)
     $img = '<object data="' . _pavatar_getSrcFrom($url) . '" type="' . $_pavatar_mime_type . '" class="pavatar"></object>' . "\n" . $content;
   else
@@ -150,7 +156,7 @@ function _pavatar_getPavatarFrom($url)
 function _pavatar_getSrcFrom($url)
 {
   global $_pavatar_base_offset, $_pavatar_cache_dir,
-    $_pavatar_cache_file, $_pavatar_is_ie, $_pavatar_mime_type,
+    $_pavatar_cache_file, $_pavatar_mime_type,
     $_pavatar_use_pavatar;
 
   $image = '';
@@ -160,7 +166,6 @@ function _pavatar_getSrcFrom($url)
     $image = _pavatar_getPavatarFrom($url);
     $headers = _pavatar_getHeaders($image);
     $_pavatar_mime_type = @$headers['content-type'];
-    echo "$image";
 
     switch ($_pavatar_mime_type)
     {
@@ -170,7 +175,7 @@ function _pavatar_getSrcFrom($url)
         $c = _pavatar_getUrlContents($image);
         break;
       default:
-        $c = (!$_pavatar_is_ie) ? "$_pavatar_mime_type;base64," . base64_encode(_pavatar_getUrlContents($image)) : $image;
+        $c = $image;
     }
 
     $f = @fopen($_pavatar_cache_file, 'w');
@@ -190,16 +195,10 @@ function _pavatar_getSrcFrom($url)
     else if (base64_decode($s) !== FALSE) // Older versions used base64-encoded data URLs
     {
       $_pavatar_mime_type = substr($s, 0, strpos($s, ';'));
-      if (!$_pavatar_mime_type)
-        $_pavatar_mime_type = 'image/png';
-
       $ret="data:$s";
     }
     else
       $ret = _pavatar_getPavatarFrom($s);
-
-    if (!$s)
-      $ret = _pavatar_getDefaultUrl();
   }
 
   $_pavatar_use_pavatar = strtolower($ret) != 'none';
@@ -209,6 +208,8 @@ function _pavatar_getSrcFrom($url)
 
 function _pavatar_getUrlContents($url)
 {
+  global $_pavatar_version, $_pavatar_ui_name, $_pavatar_ui_version;
+
   $in_headers = true;
   $ret = '';
 
@@ -219,6 +220,7 @@ function _pavatar_getUrlContents($url)
   $fh = fsockopen($urlp['host'], $urlp['port']);
   fwrite($fh, 'GET ' . $urlp['path'] . ' HTTP/1.1' . "\r\n");
   fwrite($fh, 'Host: ' . $urlp['host'] . "\r\n");
+  fwrite($fh, 'User-Agent: PHP-Pavatar/' . $_pavatar_version . ' (' . php_uname('s') . ' ' . php_uname('r') . ') ' . $_pavatar_ui_name . '/' . $_pavatar_ui_version . "\r\n");
   fwrite($fh, "Connection: close\r\n");
   fwrite($fh, "\r\n");
 
@@ -237,9 +239,16 @@ function _pavatar_getUrlContents($url)
   return $ret;
 }
 
+function _pavatar_setVersion()
+{
+  global $_pavatar_version;
+  $_pavatar_version = '0.4';
+}
+
 function _pavatar_init($url = '')
 {
-  global $_pavatar_cache_dir, $_pavatar_cache_file, $_pavatar_is_ie;
+  global $_pavatar_cache_dir, $_pavatar_cache_file,
+    $_pavatar_is_ie, $_pavatar_version;
 
   $_pavatar_cache_dir = '_pavatar_cache';
 

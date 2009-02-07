@@ -10,16 +10,22 @@ class pavatar_plugin extends Plugin
   var $help_url = 'http://pavatar.sourceforge.net/';
 
   var $name = 'Pavatar';
-  var $version = '0.3';
 
   var $apply_rendering = 'always';
   var $group = 'rendering';
 
   function PluginInit()
   {
-    global $baseurl, $_pavatar_base_offset, $_pavatar_use_gravatar;
+    global $app_version, $baseurl, $_pavatar_base_offset,
+      $_pavatar_use_gravatar, $_pavatar_version,
+      $_pavatar_ui_name, $_pavatar_ui_version;
     $_pavatar_base_offset = $baseurl;
     $_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
+
+    _pavatar_setVersion();
+    $this->version = $_pavatar_version;
+    $_pavatar_ui_name = 'b2evolution';
+    $_pavatar_ui_version = $app_version;
 
     $this->shortdesc = $this->T_('Implements Pavatar support.');
     $this->longdesc = $this->T_('Displays Pavatars in your entries and comments without having to mess around with PHP.');
@@ -33,8 +39,6 @@ class pavatar_plugin extends Plugin
     $item = $params['Item'];
 
     $url = $item->get_creator_User()->url;
-
-    _pavatar_init($url);
 
     $_pavatar_email = $item->get_creator_User()->email;
 
@@ -56,8 +60,6 @@ class pavatar_plugin extends Plugin
       $url = $comment->get_author_user()->url;
       $_pavatar_email = $comment->get_author_user()->email;
     }
-
-    _pavatar_init($url);
 
     $content = _pavatar_getPavatarCode($url, $content);
   }
