@@ -20,7 +20,9 @@ class pavatar_plugin extends Plugin
       $_pavatar_use_gravatar, $_pavatar_version,
       $_pavatar_ui_name, $_pavatar_ui_version;
     $_pavatar_base_offset = $baseurl;
-    $_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
+
+    if ($this->Settings)
+      $_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
 
     _pavatar_setVersion();
     $this->version = $_pavatar_version;
