@@ -13,11 +13,13 @@ ZIPOUT = $(SRCDIR)/pavatar-$(VERSION).zip
 
 VERSION = $(shell $(PHP) -r 'include "_pavatar.inc.php"; global $$_pavatar_version; _pavatar_setVersion(); echo $$_pavatar_version;')
 
-all dist zip: pavatar-wordpress.php $(ZIPOUT)
+all: pavatar-wordpress.php
+	
+dist zip: all $(ZIPOUT)
 	@$(MV) $(ZIPOUT) ..
 
 pavatar-wordpress.php: _pavatar.inc.php pavatar-wordpress.php.in
-	$(shell $(PHP) -r "\$$in = file_get_contents('pavatar-wordpress.php.in'); \$$in = str_replace('@VERSION@', '$(VERSION)', \$$in); file_put_contents('$@', \$$in);")
+	$(PHP) -r "\$$in = file_get_contents('pavatar-wordpress.php.in'); \$$in = str_replace('@VERSION@', '$(VERSION)', \$$in); \$$fh=fopen('$@', 'w');fwrite(\$$fh, \$$in); fclose(\$$fh);"
 
 $(ZIPOUT):
 	cd .. && $(ZIP) $(ZIPOUT) $(ZIPIN)
