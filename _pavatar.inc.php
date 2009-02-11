@@ -1,5 +1,8 @@
 <?php
 
+if (PHP_VERSION < 5)
+  die("Sorry, PHP 5 or higher is required.");
+
 $_pavatar_use_pavatar = true;
 
 $_pavatar_cache_dir;
@@ -242,7 +245,7 @@ function _pavatar_getUrlContents($url)
 function _pavatar_setVersion()
 {
   global $_pavatar_version;
-  $_pavatar_version = '0.4';
+  $_pavatar_version = '0.5';
 }
 
 function _pavatar_init($url = '')
