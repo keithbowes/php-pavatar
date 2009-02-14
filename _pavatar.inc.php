@@ -27,7 +27,7 @@ function _pavatar_cleanFiles()
   $week_seconds = 7 * 24 * 60 * 60;
 
   if (! $_pavatar_cache_dir)
-    _pavatar_init();
+    _pavatar_init_cache();
 
   $files = scandir($_pavatar_cache_dir);
   $fc = count($files);
@@ -96,7 +96,7 @@ function _pavatar_getPavatarCode($url, $content = '')
 {
   global $_pavatar_is_ie, $_pavatar_mime_type, $_pavatar_use_pavatar;
 
-  _pavatar_init($url);
+  _pavatar_init_cache($url);
 
   if (!$_pavatar_is_ie)
     $img = '<object data="' . _pavatar_getSrcFrom($url) . '" type="' . $_pavatar_mime_type . '" class="pavatar"></object>' . "\n" . $content;
@@ -123,13 +123,15 @@ function _pavatar_getPavatarFrom($url)
   if (!$_url)
   {
     $dom = new DOMDocument();
-    @$dom->loadHTML(_pavatar_getUrlContents($url));
-    $links = $dom->getElementsByTagName('link');
-
-    for ($i = 0; $i < $links->length; $i++)
+    if (@$dom->loadHTML(_pavatar_getUrlContents($url)))
     {
-      if (stristr($links->item($i)->getAttribute('rel'), 'pavatar'))
-        $_url = $links->item($i)->getAttribute('href');
+      $links = $dom->getElementsByTagName('link');
+
+      for ($i = 0; $i < $links->length; $i++)
+      {
+        if (stristr($links->item($i)->getAttribute('rel'), 'pavatar'))
+          $_url = $links->item($i)->getAttribute('href');
+      }
     }
   }
 
@@ -247,26 +249,12 @@ function _pavatar_getUrlContents($url)
   return $ret;
 }
 
-function _pavatar_setVersion()
+function _pavatar_init()
 {
-  global $_pavatar_version;
-  $_pavatar_version = '0.5';
-}
+  global $_pavatar_cache_dir, $_pavatar_cache_dir;
 
-function _pavatar_init($url = '')
-{
-  global $_pavatar_cache_dir, $_pavatar_cache_file,
-    $_pavatar_is_ie, $_pavatar_version;
-
-  $_pavatar_cache_dir = '_pavatar_cache';
-
+  _pavatar_init_cache();
   $old_cache_dir = dirname(__FILE__) . '/cache';
-
-  if (!is_dir($_pavatar_cache_dir))
-  {
-    @mkdir($_pavatar_cache_dir);
-    chown($_pavatar_cache_dir, get_current_user());
-  }
 
   /* Convert a 0.2 cache into a 0.3 cache */
   if (is_dir($old_cache_dir))
@@ -284,13 +272,34 @@ function _pavatar_init($url = '')
     rmdir($old_cache_dir);
   }
 
-  if ($url)
-    $_pavatar_cache_file = $_pavatar_cache_dir . '/' . base64_encode($url);
-
   $_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE');
+  _pavatar_setVersion();
 
   if (!file_exists($_pavatar_cache_dir . '/pavatar.png'))
     copy(dirname(__FILE__) . '/pavatar.png', $_pavatar_cache_dir . '/pavatar.png');
+}
+
+function _pavatar_init_cache($url='')
+{
+  global $_pavatar_cache_dir, $_pavatar_cache_file,
+    $_pavatar_is_ie;
+
+  $_pavatar_cache_dir = '_pavatar_cache';
+
+  if (!is_dir($_pavatar_cache_dir))
+  {
+    @mkdir($_pavatar_cache_dir);
+    chown($_pavatar_cache_dir, get_current_user());
+  }
+
+  if ($url)
+    $_pavatar_cache_file = $_pavatar_cache_dir . '/' . base64_encode($url);
+}
+
+function _pavatar_setVersion()
+{
+  global $_pavatar_version;
+  $_pavatar_version = '0.5';
 }
 
 ?>

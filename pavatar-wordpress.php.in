@@ -29,12 +29,15 @@ function _pavatar_wordpress_give_avatar()
 
 function _pavatar_wordpress_init()
 {
-  global $_pavatar_ui_name, $_pavatar_ui_version,
-    $_pavatar_use_gravatar, $wp_version;
+  global $_pavatar_base_offset, $_pavatar_ui_name,
+    $_pavatar_ui_version,$_pavatar_use_gravatar, $wp_version;
 
+  $_pavatar_base_offset = get_option('siteurl');
   $_pavatar_ui_name = 'WordPress';
   $_pavatar_ui_version = $wp_version;
   $_pavatar_use_gravatar = true;
+
+  _pavatar_init();
 }
 
 add_action('init', '_pavatar_wordpress_init');

@@ -24,7 +24,7 @@ class pavatar_plugin extends Plugin
     if ($this->Settings)
       $_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
 
-    _pavatar_setVersion();
+    _pavatar_init();
     $this->version = $_pavatar_version;
     $_pavatar_ui_name = 'b2evolution';
     $_pavatar_ui_version = $app_version;
