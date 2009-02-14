@@ -42,9 +42,10 @@ function _pavatar_cleanFiles()
   }
 }
 
-function _pavatar_getDefaultUrl()
+function _pavatar_getDefaultPavatar()
 {
-  return 'http://www.pavatar.com/';
+  global $_pavatar_base_offset, $_pavatar_cache_dir;
+  return $_pavatar_base_offset . $_pavatar_cache_dir . '/pavatar.png';
 }
 
 function _pavatar_getDirectUrl($url, & $exists)
@@ -122,7 +123,7 @@ function _pavatar_getPavatarFrom($url)
   if (!$_url)
   {
     $dom = new DOMDocument();
-    $dom->loadHTML(_pavatar_getUrlContents($url));
+    @$dom->loadHTML(_pavatar_getUrlContents($url));
     $links = $dom->getElementsByTagName('link');
 
     for ($i = 0; $i < $links->length; $i++)
@@ -139,17 +140,20 @@ function _pavatar_getPavatarFrom($url)
     if (!$exists)
     {
       $urlp = parse_url($url);
-      if ($urlp['port'])
+      if (isset($urlp['port']))
         $port = ':' . $urlp['port'];
+      else
+        $port = '';
 
       $url = $urlp['scheme'] . '://' . $urlp['host'] . $port;
       $_url = _pavatar_getDirectUrl($url, &$exists);
 
       if (!$exists)
-        if (!$_pavatar_use_gravatar)
-          $_url = _pavatar_getSrcFrom(_pavatar_getDefaultUrl());
-        else
-          $_url = 'http://www.gravatar.com/avatar/' . md5($_pavatar_email) . '?s=80&amp;d=' . rawurlencode('http://www.gravatar.com/avatar');
+      {
+        $_url = _pavatar_getDefaultPavatar();
+        if ($_pavatar_use_gravatar)
+          $_url = 'http://www.gravatar.com/avatar/' . md5($_pavatar_email) . '?s=80&amp;d=' . rawurlencode($_url);
+      }
     }
   }
 
@@ -163,6 +167,7 @@ function _pavatar_getSrcFrom($url)
     $_pavatar_use_pavatar;
 
   $image = '';
+  $ret = '';
 
   if (!file_exists($_pavatar_cache_file))
   {
@@ -198,7 +203,7 @@ function _pavatar_getSrcFrom($url)
     else if (base64_decode($s) !== FALSE) // Older versions used base64-encoded data URLs
     {
       $_pavatar_mime_type = substr($s, 0, strpos($s, ';'));
-      $ret="data:$s";
+      $ret = ($s == $_pavatar_cache_dir . '/pavatar.png') ? $s : "data:$s";
     }
     else
       $ret = _pavatar_getPavatarFrom($s);
@@ -283,6 +288,9 @@ function _pavatar_init($url = '')
     $_pavatar_cache_file = $_pavatar_cache_dir . '/' . base64_encode($url);
 
   $_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE');
+
+  if (!file_exists($_pavatar_cache_dir . '/pavatar.png'))
+    copy(dirname(__FILE__) . '/pavatar.png', $_pavatar_cache_dir . '/pavatar.png');
 }
 
 ?>
