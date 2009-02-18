@@ -7,9 +7,15 @@
   </head>
   <body>
     <h1>Pavatar</h1>
+    <h2>Introduction</h2>
     <p>This PHP library implements <a href="http://www.pavatar.com/">Pavatar</a>, an open specification for a decentralized way of including avatars (user-defined images, such as photos) in web applications.</p>
     <p>Supporting web applications is easy, through a simple <abbr title="Application Programming Interface">API</a> or, better yet, creating plugins.  It currently includes plugins for b2evolution and WordPress.</p>
-    <p>The current version is 0.5.</p>
+    <p>The current version is @VERSION@.</p>
     <p>More information: <a href="http://pavatar.sourceforge.net/">http://pavatar.sourceforge.net</a>.
+    <h2>Thanks To</h2>
+    <ul>
+      <li><a href="http://jeenaparadies.net/">Jeena Paradies</a>, author of the Pavatar spec</li>
+      <li><a href="http://sourceforge.net/users/nijineko">James Nicholls</a>, creator of the default Pavatar icon.</li>
+    </ul>
   </body>
 </html>
