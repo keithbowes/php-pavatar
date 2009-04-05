@@ -117,8 +117,6 @@ function _pavatar_getPavatarFrom($url)
     $headers = _pavatar_getHeaders($url);
     $_url = @$headers['x-pavatar'];
   }
-  else
-    $_url = 'none';
 
   if (!$_url)
   {
