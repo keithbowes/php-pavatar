@@ -103,7 +103,7 @@ function _pavatar_getPavatarCode($url, $content = '')
   else
     $img = '<img src="' . _pavatar_getSrcFrom($url) . '" alt="" class="pavatar" />' . $content;
 
-  return $_pavatar_use_pavatar ? $img : $content;
+  return $url && $_pavatar_use_pavatar ? $img : $content;
 }
 
 function _pavatar_getPavatarFrom($url)
@@ -118,7 +118,7 @@ function _pavatar_getPavatarFrom($url)
     $_url = @$headers['x-pavatar'];
   }
 
-  if (!$_url)
+  if (!$_url && $url)
   {
     $dom = new DOMDocument();
     if (@$dom->loadHTML(_pavatar_getUrlContents($url)))
@@ -133,7 +133,7 @@ function _pavatar_getPavatarFrom($url)
     }
   }
 
-  if (!$_url)
+  if (!$_url && $url)
   {
     $_url = _pavatar_getDirectUrl($url, &$exists);
 
@@ -147,14 +147,14 @@ function _pavatar_getPavatarFrom($url)
 
       $url = $urlp['scheme'] . '://' . $urlp['host'] . $port;
       $_url = _pavatar_getDirectUrl($url, &$exists);
-
-      if (!$exists)
-      {
-        $_url = _pavatar_getDefaultPavatar();
-        if ($_pavatar_use_gravatar)
-          $_url = 'http://www.gravatar.com/avatar/' . md5($_pavatar_email) . '?s=80&amp;d=' . rawurlencode($_url);
-      }
     }
+  }
+
+  if (!$_url)
+  {
+    $_url = _pavatar_getDefaultPavatar();
+    if ($_pavatar_use_gravatar)
+      $_url = 'http://www.gravatar.com/avatar/' . md5($_pavatar_email) . '?s=80&amp;d=' . rawurlencode($_url);
   }
 
   return $_url;
