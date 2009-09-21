@@ -85,6 +85,7 @@ function _pavatar_getHeaders($url)
 
 function _pavatar_getMimeType($s)
 {
+  global $_pavatar_mime_type;
   $_pavatar_mime_type = '';
 
   if (strstr($s, 'PNG'))
@@ -203,7 +204,7 @@ function _pavatar_getSrcFrom($url)
 
     if ($_pavatar_mime_type = _pavatar_getMimeType($s))
       $ret = $_pavatar_base_offset . $_pavatar_cache_file;
-    else if (base64_decode($s) !== FALSE) // Older versions used base64-encoded data URLs
+    else if (base64_decode($s) === TRUE) // Older versions used base64-encoded data URLs
     {
       $_pavatar_mime_type = substr($s, 0, strpos($s, ';'));
       $ret = ($s == $_pavatar_cache_dir . '/pavatar.png') ? $s : "data:$s";
