@@ -119,8 +119,6 @@ function _pavatar_getPavatarCode($url, $content = '')
 
 function _pavatar_getPavatarFrom($url)
 {
-  global $_pavatar_mime_type;
-
   $_url = '';
 
   if ($url)
@@ -184,7 +182,8 @@ function _pavatar_getSrcFrom($url)
       case 'image/gif':
       case 'image/jpeg':
       case 'image/png':
-        $c = _pavatar_getUrlContents($image);
+        $c = "<?php\nheader('Content-type: $_pavatar_mime_type');\n?>\n";  
+        $c .= _pavatar_getUrlContents($image);
         break;
       default:
         $c = $image;
@@ -204,11 +203,6 @@ function _pavatar_getSrcFrom($url)
 
     if ($_pavatar_mime_type = _pavatar_getMimeType($s))
       $ret = $_pavatar_base_offset . $_pavatar_cache_file;
-    else if (base64_decode($s) === TRUE) // Older versions used base64-encoded data URLs
-    {
-      $_pavatar_mime_type = substr($s, 0, strpos($s, ';'));
-      $ret = ($s == $_pavatar_cache_dir . '/pavatar.png') ? $s : "data:$s";
-    }
     else
       $ret = _pavatar_getPavatarFrom($s);
   }
@@ -256,23 +250,6 @@ function _pavatar_init()
   global $_pavatar_cache_dir, $_pavatar_cache_dir;
 
   _pavatar_init_cache();
-  $old_cache_dir = dirname(__FILE__) . '/cache';
-
-  /* Convert a 0.2 cache into a 0.3 cache */
-  if (is_dir($old_cache_dir))
-  {
-    $files = scandir($old_cache_dir);
-    $filec = count($files);
-
-    for ($i = 0; $i < $filec; $i++)
-    {
-      $file = $old_cache_dir . '/' . $files[$i];
-      if (is_file($file) && rawurldecode($file) != $file)
-        rename($file, $_pavatar_cache_dir . '/' . base64_encode(rawurldecode($file)));
-    }
-
-    rmdir($old_cache_dir);
-  }
 
   $_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE');
   _pavatar_setVersion();
@@ -295,7 +272,7 @@ function _pavatar_init_cache($url='')
   }
 
   if ($url)
-    $_pavatar_cache_file = $_pavatar_cache_dir . '/' . base64_encode($url);
+    $_pavatar_cache_file = $_pavatar_cache_dir . '/' . base64_encode($url) . '.php';
 }
 
 function _pavatar_setVersion()
