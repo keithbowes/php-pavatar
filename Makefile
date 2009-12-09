@@ -16,6 +16,9 @@ VERSION = $(shell $(PHP) -r 'include "_pavatar.inc.php"; global $$_pavatar_versi
 in2out = $(PHP) -r "\$$in = file_get_contents('$(1).in'); \$$in = str_replace('@VERSION@', '$(VERSION)', \$$in); \$$fh=fopen('$(1)', 'w');fwrite(\$$fh, \$$in); fclose(\$$fh);"
 
 all: README.html pavatar-wordpress.php
+
+clean:
+	$(RM) README.html pavatar-wordpress.php
 	
 dist zip: all $(ZIPOUT)
 	@$(MV) $(ZIPOUT) ..

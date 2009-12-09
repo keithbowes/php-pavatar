@@ -80,21 +80,6 @@ function _pavatar_getHeaders($url)
   return $ret;
 }
 
-function _pavatar_getMimeType($s)
-{
-  global $_pavatar_mime_type;
-  $_pavatar_mime_type = '';
-
-  if (strstr($s, 'PNG'))
-    $_pavatar_mime_type = 'image/png';
-  else if (strstr($s, 'JFIF'))
-    $_pavatar_mime_type = 'image/jpeg';
-  else if (strstr($s, 'GIF'))
-    $_pavatar_mime_type = 'image/gif';
-
-  return $_pavatar_mime_type;
-}
-
 function _pavatar_getPavatarCode($url, $content = '')
 {
   global $_pavatar_is_ie, $_pavatar_mime_type, $_pavatar_use_pavatar;
@@ -135,8 +120,11 @@ function _pavatar_getPavatarFrom($url)
 
         for ($i = 0; $i < $links->length; $i++)
         {
-          if (stristr($links->item($i)->getAttribute('rel'), 'pavatar'))
-            $_url = $links->item($i)->getAttribute('href');
+          $rels = strtolower($links->item($i)->getAttribute('rel'));
+          $relsarr = preg_split('/\s+/', $rels);
+
+          if (array_search('pavatar', $relsarr) !== FALSE)
+            $_url = html_entity_decode($links->item($i)->getAttribute('href'));
         }
       }
     }
@@ -197,22 +185,30 @@ function _pavatar_getSrcFrom($url)
       case 'image/gif':
       case 'image/jpeg':
       case 'image/png':
+        if (@$headers['location'])
+        {
+          $image = $headers['location'];
+        }
+
         $c = _pavatar_getUrlContents($image);
         break;
       default:
         $c = $image;
     }
 
-    $f = @fopen($_pavatar_cache_file . $ext, 'w');
-    @fwrite($f, $c);
-    @fclose($f);
+    if (@$headers['content-length'] > 0)
+    {
+      $f = @fopen($_pavatar_cache_file . $ext, 'w');
+      @fwrite($f, $c);
+      @fclose($f);
 
-    $f = @fopen($mime_file, 'w');
-    @fwrite($f, $_pavatar_mime_type);
-    @fclose($f);
+      $f = @fopen($mime_file, 'w');
+      @fwrite($f, $_pavatar_mime_type);
+      @fclose($f);
 
-    chown($_pavatar_cache_file, get_current_user());
-    chmod($_pavatar_cache_file, 0755);
+      chown($_pavatar_cache_file, get_current_user());
+      chmod($_pavatar_cache_file, 0755);
+    }
   }
 
   if (file_exists($mime_file))
@@ -310,7 +306,7 @@ function _pavatar_init_cache($url='')
 function _pavatar_setVersion()
 {
   global $_pavatar_version;
-  $_pavatar_version = '0.4.1';
+  $_pavatar_version = '0.4.2';
 }
 
 ?>
