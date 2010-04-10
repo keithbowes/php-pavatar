@@ -206,8 +206,11 @@ function _pavatar_getSrcFrom($url)
       @fwrite($f, $_pavatar_mime_type);
       @fclose($f);
 
-      chown($_pavatar_cache_file, get_current_user());
-      chmod($_pavatar_cache_file, 0755);
+      if (file_exists($_pavatar_cache_file))
+      {
+        chown($_pavatar_cache_file, get_current_user());
+        chmod($_pavatar_cache_file, 0755);
+      }
     }
   }
 
