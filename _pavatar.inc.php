@@ -91,12 +91,17 @@ function _pavatar_getPavatarCode($url, $content = '')
   else
     $url = _pavatar_getDefaultPavatar();
 
-  if (!$_pavatar_is_ie)
-    $img = '<object data="' . $url . '" type="' . $_pavatar_mime_type . '" class="pavatar"></object>' . "\n" . $content;
-  else
-    $img = '<img src="' . $url . '" alt="" class="pavatar" />' . $content;
+	if (strstr($_pavatar_mime_type, 'image') !== FALSE)
+	{
+		if (!$_pavatar_is_ie)
+			$img = '<object data="' . $url . '" type="' . $_pavatar_mime_type . '" class="pavatar"></object>' . "\n" . $content;
+		else
+			$img = '<img src="' . $url . '" alt="" class="pavatar" />' . $content;
 
-  return $_pavatar_use_pavatar ? $img : $content;
+		return $_pavatar_use_pavatar ? $img : $content;
+	}
+	else
+		return $content;
 }
 
 function _pavatar_getPavatarFrom($url)
