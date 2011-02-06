@@ -42,10 +42,16 @@ function _pavatar_cleanFiles()
 function _pavatar_getDefaultPavatar()
 {
   global $_pavatar_base_offset, $_pavatar_cache_dir, $_pavatar_email,
-    $_pavatar_use_gravatar;
-  $ret = $_pavatar_base_offset . $_pavatar_cache_dir . '/pavatar.png';
-  if ($_pavatar_use_gravatar)
-    $ret = 'http://www.gravatar.com/avatar/' . md5($_pavatar_email) . '?s=80&amp;d=' . rawurlencode($ret);
+		$_pavatar_mime_type, $_pavatar_use_gravatar;
+
+	$ret = $_pavatar_base_offset . $_pavatar_cache_dir . '/pavatar.png';
+	$_pavatar_mime_type = 'image/png';
+
+	if ($_pavatar_use_gravatar)
+	{
+		$ret = 'http://www.gravatar.com/avatar/' . md5($_pavatar_email) . '?s=80&amp;d=' . rawurlencode($ret);
+		$_pavatar_mime_type = '';
+	}
 
   return  $ret;
 }
@@ -84,24 +90,27 @@ function _pavatar_getPavatarCode($url, $content = '')
 {
   global $_pavatar_is_ie, $_pavatar_mime_type, $_pavatar_use_pavatar;
 
-  _pavatar_init_cache($url);
+	_pavatar_init_cache($url);
 
   if ($url)
     $url = _pavatar_getSrcFrom($url);
-  else
-    $url = _pavatar_getDefaultPavatar();
 
-	if (strstr($_pavatar_mime_type, 'image') !== FALSE)
+	if (strstr($_pavatar_mime_type, 'image') === FALSE)
+		$url = _pavatar_getDefaultPavatar();
+
+	if (!$_pavatar_is_ie)
 	{
-		if (!$_pavatar_is_ie)
-			$img = '<object data="' . $url . '" type="' . $_pavatar_mime_type . '" class="pavatar"></object>' . "\n" . $content;
-		else
-			$img = '<img src="' . $url . '" alt="" class="pavatar" />' . $content;
-
-		return $_pavatar_use_pavatar ? $img : $content;
+		$img = '<object data="' . $url . '"';
+		
+		if ($_pavatar_mime_type)
+			$img .= ' type="' . $_pavatar_mime_type . '"';
+	 
+		$img .= '	class="pavatar"></object>' . "\n" . $content;
 	}
 	else
-		return $content;
+		$img = '<img src="' . $url . '" alt="" class="pavatar" />' . $content;
+
+		return $img;
 }
 
 function _pavatar_getPavatarFrom($url)
@@ -112,7 +121,7 @@ function _pavatar_getPavatarFrom($url)
   {
     $headers = _pavatar_getHeaders($url);
     $_url = @$headers['x-pavatar'];
-  }
+	}
 
   if (!$_url && $url)
   {
@@ -161,13 +170,14 @@ function _pavatar_getSrcFrom($url)
     $_pavatar_cache_file, $_pavatar_mime_type,
     $_pavatar_use_pavatar;
 
+	$_pavatar_mime_type = '';
   $image = '';
   $ret = '';
 
   $mime_file = $_pavatar_cache_file . '.mime';
 
   if (!file_exists($mime_file))
-  {
+	{
     $image = _pavatar_getPavatarFrom($url);
     $headers = _pavatar_getHeaders($image);
     $_pavatar_mime_type = @$headers['content-type'];
@@ -243,7 +253,7 @@ function _pavatar_getSrcFrom($url)
       $ret = _pavatar_getPavatarFrom($s);
   }
 
-  $_pavatar_use_pavatar = strtolower($ret) != 'none';
+	$_pavatar_use_pavatar = $ret != 'none';
 
   return $ret;
 }
