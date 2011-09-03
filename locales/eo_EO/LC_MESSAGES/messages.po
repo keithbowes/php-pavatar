@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: b 2e\n"
 "Report-Msgid-Bugs-To: http://fplanque.net/\n"
 "POT-Creation-Date: 2009-02-06 22:39-0500\n"
-"PO-Revision-Date: 2009-02-06 22:41-0500\n"
+"PO-Revision-Date: 2011-09-03 16:34-0400\n"
 "Last-Translator: Keith Bowes <zooplah@users.sourceforge.net>\n"
 "Language-Team: Esperanto\n"
 "MIME-Version: 1.0\n"
@@ -18,18 +18,18 @@ msgstr ""
 
 #: ..\..\..\_pavatar.plugin.php:24
 msgid "Implements Pavatar support."
-msgstr "Realigas regon de Pavatar"
+msgstr "Realigas regon de Pavatar."
 
 #: ..\..\..\_pavatar.plugin.php:25
 msgid ""
 "Displays Pavatars in your entries and comments without having to mess around "
 "with PHP."
-msgstr "Montras Pavatarojn en via blogeroj kaj komentoj sen la bezono de PHP-kodado."
+msgstr "Montras pavatarojn en viaj blogeroj kaj komentoj sen la bezono de PHP-kodado."
 
 #: ..\..\..\_pavatar.plugin.php:74
 msgid "Use Gravatar: "
-msgstr "Uzi Gravatar: "
+msgstr "Uzi Gravatar-on: "
 
 #: ..\..\..\_pavatar.plugin.php:77
 msgid "for comment authors who don't have a Pavatar"
-msgstr "por koment-verkistoj, kiuj ne havas Pavataron"
+msgstr "por komento-verkistoj, kiuj ne havas Pavataron"

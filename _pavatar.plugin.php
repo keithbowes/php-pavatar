@@ -66,11 +66,6 @@ class pavatar_plugin extends Plugin
     $content = _pavatar_getPavatarCode($url, $content);
   }
 
-  function SkinEndHtmlBody(& $params)
-  {
-    //_pavatar_cleanFiles();
-  }
-
   function GetDefaultSettings(& $params)
   {
     /* Using a variable for conditional returns */
