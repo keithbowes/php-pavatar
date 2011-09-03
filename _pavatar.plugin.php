@@ -16,6 +16,9 @@ class pavatar_plugin extends Plugin
 
   function PluginInit()
   {
+		global $Settings;
+		$Settings->set('allow_avatars', false);
+
     global $app_version, $baseurl, $_pavatar_base_offset,
       $_pavatar_use_gravatar, $_pavatar_version,
       $_pavatar_ui_name, $_pavatar_ui_version;
