@@ -295,7 +295,7 @@ function _pavatar_init()
 {
   global $_pavatar_cache_dir, $_pavatar_cache_dir;
 
-  _pavatar_init_cache();
+	_pavatar_cleanFiles();
 
   $_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE');
   _pavatar_setVersion();
@@ -307,9 +307,10 @@ function _pavatar_init()
 function _pavatar_init_cache($url='')
 {
   global $_pavatar_cache_dir, $_pavatar_cache_file,
-    $_pavatar_is_ie;
+    $_pavatar_is_ie, $_pavatar_mime_type;
 
-  $_pavatar_cache_dir = '_pavatar_cache';
+	$_pavatar_cache_dir = '_pavatar_cache';
+	$_pavatar_mime_type = '';
 
   if (!is_dir($_pavatar_cache_dir))
   {

@@ -68,7 +68,7 @@ class pavatar_plugin extends Plugin
 
   function SkinEndHtmlBody(& $params)
   {
-    _pavatar_cleanFiles();
+    //_pavatar_cleanFiles();
   }
 
   function GetDefaultSettings(& $params)
