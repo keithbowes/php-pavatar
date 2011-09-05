@@ -257,7 +257,7 @@ function _pavatar_getSrcFrom($url)
         break;
     }
 
-    $s = file_get_contents($_pavatar_cache_file . $ext);
+    @$s = file_get_contents($_pavatar_cache_file . $ext);
 
     if ($_pavatar_mime_type = $image_type)
       $ret = $_pavatar_base_offset . $_pavatar_cache_file . $ext;
@@ -272,7 +272,7 @@ function _pavatar_getSrcFrom($url)
 
 function _pavatar_getUrlContents($url)
 {
-  global $_pavatar_version, $_pavatar_ui_name, $_pavatar_ui_version;
+  global $_pavatar_mime_type, $_pavatar_version, $_pavatar_ui_name, $_pavatar_ui_version;
 
   $in_headers = true;
   $ret = '';
@@ -281,25 +281,32 @@ function _pavatar_getUrlContents($url)
   if (empty($urlp['port']))
     $urlp['port'] = 80;
 
-  $fh = fsockopen($urlp['host'], $urlp['port']);
-  fwrite($fh, 'GET ' . $urlp['path'] . ' HTTP/1.1' . "\r\n");
-  fwrite($fh, 'Host: ' . $urlp['host'] . "\r\n");
-  fwrite($fh, 'User-Agent: PHP-Pavatar/' . $_pavatar_version . ' (' . php_uname('s') . ' ' . php_uname('r') . ') ' . $_pavatar_ui_name . '/' . $_pavatar_ui_version . "\r\n");
-  fwrite($fh, "Connection: close\r\n");
-  fwrite($fh, "\r\n");
+  @$fh = fsockopen($urlp['host'], $urlp['port']);
+	if ($fh)
+	{
+		fwrite($fh, 'GET ' . $urlp['path'] . ' HTTP/1.1' . "\r\n");
+		fwrite($fh, 'Host: ' . $urlp['host'] . "\r\n");
+		fwrite($fh, 'User-Agent: PHP-Pavatar/' . $_pavatar_version . ' (' . php_uname('s') . ' ' . php_uname('r') . ') ' . $_pavatar_ui_name . '/' . $_pavatar_ui_version . "\r\n");
+		fwrite($fh, "Connection: close\r\n");
+		fwrite($fh, "\r\n");
 
-  while (!feof($fh))
-  {
-    if ($in_headers || !trim($ret))
-      $ret = '';
+		while (!feof($fh))
+		{
+			if ($in_headers || !trim($ret))
+				$ret = '';
 
-    $ret .= fgets($fh);
+			$ret .= fgets($fh);
 
-    if (!trim($ret))
-      $in_headers = false;
-  }
+			if (!trim($ret))
+				$in_headers = false;
+		}
+	}
+	else
+	{
+		$_pavatar_mime_type = 'text/plain';
+	}
 
-  fclose($fh);
+  @fclose($fh);
   return $ret;
 }
 
