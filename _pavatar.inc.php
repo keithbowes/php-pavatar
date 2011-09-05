@@ -223,7 +223,7 @@ function _pavatar_getSrcFrom($url)
         $c = $image;
     }
 
-    if (!$headers || !$headers['content-length'] || @$headers['content-length'] > 0)
+    if (!$headers || empty($headers['content-length']) || @$headers['content-length'] > 0)
     {
       $f = @fopen($_pavatar_cache_file . $ext, 'w');
       @fwrite($f, $c);
