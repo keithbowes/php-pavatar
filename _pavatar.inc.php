@@ -115,6 +115,7 @@ function _pavatar_getPavatarCode($url, $content = '')
 
 function _pavatar_getPavatarFrom($url)
 {
+	global $_pavatar_mime_type;
   $_url = '';
 
   if ($url)
@@ -138,7 +139,13 @@ function _pavatar_getPavatarFrom($url)
           $relsarr = preg_split('/\s+/', $rels);
 
           if (array_search('pavatar', $relsarr) !== FALSE)
-            $_url = html_entity_decode($links->item($i)->getAttribute('href'));
+					{
+						$_url = html_entity_decode($links->item($i)->getAttribute('href'));
+						$_pavatar_mime_type = $links->item($i)->getAttribute('type');
+
+						if (!$_pavatar_mime_type)
+							$_pavatar_mime_type = 'image/png';
+					}
         }
       }
     }
@@ -170,7 +177,8 @@ function _pavatar_getSrcFrom($url)
     $_pavatar_cache_file, $_pavatar_mime_type,
     $_pavatar_use_pavatar;
 
-	$_pavatar_mime_type = '';
+	$ext = '';
+	$headers = '';
   $image = '';
   $ret = '';
 
@@ -179,8 +187,12 @@ function _pavatar_getSrcFrom($url)
   if (!file_exists($mime_file))
 	{
     $image = _pavatar_getPavatarFrom($url);
-    $headers = _pavatar_getHeaders($image);
-    $_pavatar_mime_type = @$headers['content-type'];
+
+		if (!$_pavatar_mime_type)
+		{
+      $headers = _pavatar_getHeaders($image);
+			$_pavatar_mime_type = @$headers['content-type'];
+		}
 
     switch ($_pavatar_mime_type)
     {
@@ -200,7 +212,7 @@ function _pavatar_getSrcFrom($url)
       case 'image/gif':
       case 'image/jpeg':
       case 'image/png':
-        if (@$headers['location'])
+        if ($headers && @$headers['location'])
         {
           $image = $headers['location'];
         }
@@ -211,7 +223,7 @@ function _pavatar_getSrcFrom($url)
         $c = $image;
     }
 
-    if (@$headers['content-length'] > 0)
+    if (!$headers || !$headers['content-length'] || @$headers['content-length'] > 0)
     {
       $f = @fopen($_pavatar_cache_file . $ext, 'w');
       @fwrite($f, $c);
