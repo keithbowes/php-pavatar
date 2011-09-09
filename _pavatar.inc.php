@@ -153,7 +153,7 @@ function _pavatar_getPavatarFrom($url)
 
   if (!$_url && $url)
   {
-    $_url = _pavatar_getDirectUrl($url, &$exists);
+    $_url = _pavatar_getDirectUrl($url, $exists);
 
     if (!$exists)
     {
@@ -164,7 +164,7 @@ function _pavatar_getPavatarFrom($url)
         $port = '';
 
       $url = $urlp['scheme'] . '://' . $urlp['host'] . $port;
-      $_url = _pavatar_getDirectUrl($url, &$exists);
+      $_url = _pavatar_getDirectUrl($url, $exists);
     }
   }
 
