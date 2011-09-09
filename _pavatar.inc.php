@@ -132,6 +132,7 @@ function _pavatar_getPavatarFrom($url)
       if (@$dom->loadHTML(_pavatar_getUrlContents($url)))
       {
         $links = $dom->getElementsByTagName('link');
+				$metas = $dom->getElementsByTagName('meta');
 
         for ($i = 0; $i < $links->length; $i++)
         {
@@ -142,11 +143,21 @@ function _pavatar_getPavatarFrom($url)
 					{
 						$_url = html_entity_decode($links->item($i)->getAttribute('href'));
 						$_pavatar_mime_type = $links->item($i)->getAttribute('type');
-
-						if (!$_pavatar_mime_type)
-							$_pavatar_mime_type = 'image/png';
 					}
         }
+
+				for ($i = 0; $i < $metas->length; $i++)
+				{
+					$httpequiv = strtolower($metas->item($i)->getAttribute('http-equiv'));
+					if ($httpequiv == 'x-pavatar')
+						$_url = html_entity_decode($metas->item($i)->getAttribute('content'));
+
+					if ($httpequiv == 'x-pavatar-type')
+						$_pavatar_mime_type = $metas->item($i)->getAttribute('content');
+				}
+
+				if ($_url && !$_pavatar_mime_type)
+					$_pavatar_mime_type = 'image/png';
       }
     }
   }
