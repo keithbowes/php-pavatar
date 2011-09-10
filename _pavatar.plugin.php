@@ -24,7 +24,7 @@ class pavatar_plugin extends Plugin
       $_pavatar_ui_name, $_pavatar_ui_version;
     $_pavatar_base_offset = $baseurl;
 
-    if (isset($this->Settings))
+    if (is_object($this->Settings))
       $_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
 
     _pavatar_init();
