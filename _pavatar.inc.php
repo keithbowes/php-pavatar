@@ -98,17 +98,24 @@ function _pavatar_getPavatarCode($url, $content = '')
 	if (strstr($_pavatar_mime_type, 'image') === FALSE)
 		$url = _pavatar_getDefaultPavatar();
 
+	$img = '<a href="http://www.pavatar.com/">';
+
 	if (!$_pavatar_is_ie)
 	{
-		$img = '<object data="' . $url . '"';
+		$img .= '<object data="' . $url . '"';
 		
 		if ($_pavatar_mime_type)
 			$img .= ' type="' . $_pavatar_mime_type . '"';
 	 
-		$img .= '	class="pavatar"></object>' . "\n" . $content;
+		$img .= '	class="pavatar"></object>';
+		$img .= '</a>'	. "\n" . $content;
 	}
 	else
-		$img = '<img src="' . $url . '" alt="" class="pavatar" />' . $content;
+	{
+		$img .= '<img src="' . $url . '" alt="" class="pavatar" />' . $content;
+		$img .= '</a>';
+	}
+
 
 		return $img;
 }

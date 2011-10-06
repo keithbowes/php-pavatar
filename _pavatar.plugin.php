@@ -14,18 +14,18 @@ class pavatar_plugin extends Plugin
   var $apply_rendering = 'always';
   var $group = 'rendering';
 
-  function PluginInit()
+  function PluginInit(& $params)
   {
 		global $Settings;
 		$Settings->set('allow_avatars', false);
 
-    global $app_version, $baseurl, $_pavatar_base_offset,
-      $_pavatar_use_gravatar, $_pavatar_version,
-      $_pavatar_ui_name, $_pavatar_ui_version;
-    $_pavatar_base_offset = $baseurl;
+    global $app_version, $baseurl, $default_avatar, $_pavatar_base_offset,
+			$_pavatar_use_gravatar, $_pavatar_version,
+			$_pavatar_ui_name, $_pavatar_ui_version;
+		$_pavatar_base_offset = $baseurl;
 
-    if (is_object($this->Settings))
-      $_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
+		if ($params['is_installed'])
+			$_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
 
     _pavatar_init();
     $this->version = $_pavatar_version;
