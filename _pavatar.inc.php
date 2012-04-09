@@ -23,7 +23,7 @@ function _pavatar_cleanFiles()
   global $_pavatar_cache_dir;
   $week_seconds = 7 * 24 * 60 * 60;
 
-  if (! $_pavatar_cache_dir)
+  if (!is_dir($_pavatar_cache_dir))
     _pavatar_init_cache();
 
   $files = scandir($_pavatar_cache_dir);
@@ -346,7 +346,8 @@ function _pavatar_init_cache($url='')
   global $_pavatar_cache_dir, $_pavatar_cache_file,
     $_pavatar_is_ie, $_pavatar_mime_type;
 
-	$_pavatar_cache_dir = '_pavatar_cache';
+	if (!$_pavatar_cache_dir)
+		$_pavatar_cache_dir = '_pavatar_cache';
 	$_pavatar_mime_type = '';
 
   if (!is_dir($_pavatar_cache_dir))

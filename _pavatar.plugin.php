@@ -20,9 +20,12 @@ class pavatar_plugin extends Plugin
 		$Settings->set('allow_avatars', false);
 
     global $app_version, $baseurl, $default_avatar, $_pavatar_base_offset,
-			$_pavatar_use_gravatar, $_pavatar_version,
+			$_pavatar_cache_dir, $_pavatar_use_gravatar, $_pavatar_version,
 			$_pavatar_ui_name, $_pavatar_ui_version;
 		$_pavatar_base_offset = $baseurl;
+
+		if (is_dir('cache/plugins'))
+			$_pavatar_cache_dir = 'cache/plugins/pavatar';
 
 		if ($params['is_installed'])
 			$_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
