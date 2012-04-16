@@ -363,7 +363,7 @@ function _pavatar_init_cache($url='')
 function _pavatar_setVersion()
 {
   global $_pavatar_version;
-  $_pavatar_version = '0.4.3';
+  $_pavatar_version = '0.4.4';
 }
 
 ?>
