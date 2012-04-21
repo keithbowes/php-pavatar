@@ -8,7 +8,6 @@ class pavatar_plugin extends Plugin
 
   var $author = 'http://kechjo.cogia.net/';
   var $help_url = 'http://pavatar.sourceforge.net/';
-
   var $name = 'Pavatar';
 
   var $apply_rendering = 'always';
@@ -35,8 +34,8 @@ class pavatar_plugin extends Plugin
     $_pavatar_ui_name = 'b2evolution';
     $_pavatar_ui_version = $app_version;
 
-    $this->shortdesc = $this->T_('Implements Pavatar support.');
-    $this->longdesc = $this->T_('Displays Pavatars in your entries and comments without having to mess around with PHP.');
+    $this->short_desc = $this->T_('Implements Pavatar support.');
+    $this->long_desc = $this->T_('Displays Pavatars in your entries and comments without having to mess around with PHP.');
   }
 
   function DisplayItemAsHtml(& $params)
