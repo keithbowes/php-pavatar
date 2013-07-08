@@ -338,6 +338,9 @@ function _pavatar_init()
 
 	if (!file_exists($_pavatar_cache_dir . '/pavatar.png'))
 		copy(dirname(__FILE__) . '/pavatar.png', $_pavatar_cache_dir . '/pavatar.png');
+
+	if (!file_exists($_pavatar_cache_dir . '/.htaccess'))
+		copy(dirname(__FILE__) . '/.htaccess', $_pavatar_cache_dir . '/.htaccess');
 }
 
 function _pavatar_init_cache($url='')
