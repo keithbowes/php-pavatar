@@ -8,26 +8,27 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://fplanque.net/\n"
-"POT-Creation-Date: 2009-02-06 22:39-0500\n"
+"POT-Creation-Date: 2013-12-17 20:08-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ..\..\..\_pavatar.plugin.php:24
+#: ../../../_pavatar.plugin.php:40
 msgid "Implements Pavatar support."
 msgstr ""
 
-#: ..\..\..\_pavatar.plugin.php:25
+#: ../../../_pavatar.plugin.php:41
 msgid "Displays Pavatars in your entries and comments without having to mess around with PHP."
 msgstr ""
 
-#: ..\..\..\_pavatar.plugin.php:74
+#: ../../../_pavatar.plugin.php:104
 msgid "Use Gravatar: "
 msgstr ""
 
-#: ..\..\..\_pavatar.plugin.php:77
+#: ../../../_pavatar.plugin.php:107
 msgid "for comment authors who don't have a Pavatar"
 msgstr ""

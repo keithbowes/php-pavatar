@@ -10,29 +10,31 @@ class pavatar_plugin extends Plugin
 	var $help_url = 'http://pavatar.sourceforge.net/';
 	var $name = 'Pavatar';
 
+	/* Rendering settings for b2evolution 4 */
 	var $apply_rendering = 'always';
 	var $group = 'rendering';
+	var $number_of_installs = 1;
 
 	function PluginInit(& $params)
 	{
 		global $Settings;
 		$Settings->set('allow_avatars', false);
 
-		global $app_version, $baseurl, $default_avatar, $_pavatar_base_offset,
-			$_pavatar_cache_dir, $_pavatar_use_gravatar, $_pavatar_is_ie,
+		global $app_name, $app_version, $baseurl, $cache_subdir,
+			$default_avatar, $_pavatar_base_offset, $_pavatar_cache_dir,
+			$_pavatar_use_gravatar,
 			$_pavatar_version, $_pavatar_ui_name, $_pavatar_ui_version;
 		$_pavatar_base_offset = $baseurl;
 
-		if (is_dir('cache/plugins'))
-			$_pavatar_cache_dir = 'cache/plugins/pavatar';
+		if (is_dir($cache_subdir . 'plugins'))
+			$_pavatar_cache_dir = $cache_subdir . 'plugins/pavatar';
 
 		if ($params['is_installed'])
 			$_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
 
 		_pavatar_init();
 		$this->version = $_pavatar_version;
-		$_pavatar_is_ie = $app_version >= 5.0; // b2evolution 5+ have HTML-correction code that produces invalid HTML if false
-		$_pavatar_ui_name = 'b2evolution';
+		$_pavatar_ui_name = $app_name;
 		$_pavatar_ui_version = $app_version;
 
 		$this->short_desc = $this->T_('Implements Pavatar support.');
@@ -70,6 +72,29 @@ class pavatar_plugin extends Plugin
 		}
 
 		$content = _pavatar_getPavatarCode($url, $content);
+
+		/* Get around an HTML-correction bug in b2evolution 5+ */
+		global $app_name, $app_version, $_pavatar_is_ie;
+		if (!$_pavatar_is_ie &&
+			('b2evolution' == $app_name && version_compare($app_version, '5.0') >= 0))
+		{
+			static $pid = 0;
+			$pid++;
+
+			global $use_strict;
+			if ($use_strict)
+			{
+				$map_id = 'id="pavatar' . $pid . '"';
+				$usemap = 'pavatar' . $pid;
+			}
+			else
+			{
+				$map_id = 'name="pavatar' . $pid . '"';
+				$usemap = '#pavatar' . $pid;
+			}
+
+			$content = preg_replace('|^(<a[^>]+)(>)(<object[^>]+)(>)(</object>)(</a>)|', '$3 usemap="' . $usemap . '"$4<map ' . $map_id . '><div>$1 shape="rect" coords="0, 0, 80, 80"$2$6</div></map>$5', $content);
+		}
 	}
 
 	function GetDefaultSettings(& $params)
@@ -82,6 +107,18 @@ class pavatar_plugin extends Plugin
 				'note' => $this->T_('for comment authors who don\'t have a Pavatar'));
 
 		return $ret;
+	}
+
+	/* Rendering settings for b2evolution 5 */
+	function get_coll_setting_definitions( & $params )
+	{
+		$default_params = array_merge($params,
+			array (
+				'default_comment_rendering' => 'stealth',
+				'default_post_rendering' => 'always',
+			)
+		);
+		return parent::get_coll_setting_definitions($default_params);
 	}
 }
 

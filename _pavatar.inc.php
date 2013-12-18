@@ -107,15 +107,14 @@ function _pavatar_getPavatarCode($url, $content = '')
 		if ($_pavatar_mime_type)
 			$img .= ' type="' . $_pavatar_mime_type . '"';
 	 
-		$img .= '	class="pavatar"></object>';
-		$img .= '</a>' . "\n" . $content;
+		$img .= ' class="pavatar"></object>';
 	}
 	else
 	{
-		$img .= '<img src="' . $url . '" alt="" class="pavatar" /></a>' . $content;
+		$img .= '<img src="' . $url . '" alt="" class="pavatar" />';
 	}
 
-
+		$img .= '</a>' . $content;
 		return $img;
 }
 
@@ -329,11 +328,11 @@ function _pavatar_getUrlContents($url)
 
 function _pavatar_init()
 {
-	global $_pavatar_cache_dir, $_pavatar_cache_dir;
+	global $_pavatar_cache_dir, $_pavatar_cache_dir, $_pavatar_is_ie;
 
 	_pavatar_cleanFiles();
 
-	$_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE');
+	$_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== FALSE;
 	_pavatar_setVersion();
 
 	if (!file_exists($_pavatar_cache_dir . '/pavatar.png'))
@@ -346,7 +345,7 @@ function _pavatar_init()
 function _pavatar_init_cache($url='')
 {
 	global $_pavatar_cache_dir, $_pavatar_cache_file,
-		$_pavatar_is_ie, $_pavatar_mime_type;
+		$_pavatar_mime_type;
 
 	if (!$_pavatar_cache_dir)
 		$_pavatar_cache_dir = '_pavatar_cache';
