@@ -251,8 +251,8 @@ function _pavatar_getSrcFrom($url)
 
 			if (file_exists($_pavatar_cache_file))
 			{
-				chown($_pavatar_cache_file, get_current_user());
-				chmod($_pavatar_cache_file, 0755);
+				@chown($_pavatar_cache_file, get_current_user());
+				@chmod($_pavatar_cache_file, 0755);
 			}
 		}
 	}
@@ -354,7 +354,7 @@ function _pavatar_init_cache($url='')
 	if (!is_dir($_pavatar_cache_dir))
 	{
 		@mkdir($_pavatar_cache_dir);
-		chown($_pavatar_cache_dir, get_current_user());
+		@chown($_pavatar_cache_dir, get_current_user());
 	}
 
 	if ($url)
