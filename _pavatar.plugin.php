@@ -93,7 +93,7 @@ class pavatar_plugin extends Plugin
 				$usemap = '#pavatar' . $pid;
 			}
 
-			$content = preg_replace('|^(<a[^>]+)(>)(<object[^>]+)(>)(</object>)(</a>)|', '$3 usemap="' . $usemap . '"$4<map ' . $map_id . '><div>$1 shape="rect" coords="0, 0, 80, 80"$2$6</div></map>$5', $content);
+			$content = preg_replace('|^(<a[^>]+)(>)(<object[^>]+)(>)(</object>)(</a>)|', '$3 usemap="' . $usemap . '" title="&#160;"$4<map ' . $map_id . '><div>$1 shape="rect" coords="0, 0, 80, 80"$2$6</div></map>$5', $content);
 		}
 	}
 

@@ -1,3 +1,7 @@
+<IfModule mod_access.c>
+    Allow from all
+</IfModule>
+
 <IfModule mod_authz_host.c>
-    Allow from All
+    Allow from all
 </IfModule>
