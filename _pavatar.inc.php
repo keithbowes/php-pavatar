@@ -120,6 +120,7 @@ function _pavatar_getPavatarCode($url, $content = '')
 
 function _pavatar_getPavatarFrom($url)
 {
+	/* Note that indicating the MIME type is an extension. */
 	global $_pavatar_mime_type;
 	$_url = '';
 
@@ -146,26 +147,35 @@ function _pavatar_getPavatarFrom($url)
 
 					if (array_search('pavatar', $relsarr) !== FALSE)
 					{
-						$_url = html_entity_decode($links->item($i)->getAttribute('href'));
 						$_pavatar_mime_type = $links->item($i)->getAttribute('type');
+						$_url = html_entity_decode($links->item($i)->getAttribute('href'));
+					}
+
+					if (isset($_url) && isset($_pavatar_mime_type)) break;
+				}
+
+				/* Non-standard use of <meta http-equiv…>.  Subject to change. */
+				if (!$_url)
+				{
+					for ($i = 0; $i < $metas->length; $i++)
+					{
+
+						$httpequiv = strtolower($metas->item($i)->getAttribute('http-equiv'));
+						if ($httpequiv == 'x-pavatar')
+							$_url = html_entity_decode($metas->item($i)->getAttribute('content'));
+
+						if ($httpequiv == 'x-pavatar-type')
+							$_pavatar_mime_type = $metas->item($i)->getAttribute('content');
+
+					if (isset($_url) && isset($_pavatar_mime_type)) break;
 					}
 				}
-
-				for ($i = 0; $i < $metas->length; $i++)
-				{
-					$httpequiv = strtolower($metas->item($i)->getAttribute('http-equiv'));
-					if ($httpequiv == 'x-pavatar')
-						$_url = html_entity_decode($metas->item($i)->getAttribute('content'));
-
-					if ($httpequiv == 'x-pavatar-type')
-						$_pavatar_mime_type = $metas->item($i)->getAttribute('content');
-				}
-
-				if ($_url && !$_pavatar_mime_type)
-					$_pavatar_mime_type = 'image/png';
 			}
 		}
 	}
+
+	if ($_url && !$_pavatar_mime_type)
+		$_pavatar_mime_type = 'image/png';
 
 	if (!$_url && $url)
 	{
