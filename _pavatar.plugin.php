@@ -81,17 +81,8 @@ class pavatar_plugin extends Plugin
 			static $pid = 0;
 			$pid++;
 
-			global $use_strict;
-			if ($use_strict)
-			{
-				$map_id = 'id="pavatar' . $pid . '"';
-				$usemap = 'pavatar' . $pid;
-			}
-			else
-			{
-				$map_id = 'name="pavatar' . $pid . '"';
-				$usemap = '#pavatar' . $pid;
-			}
+			$map_id = 'id="pavatar' . $pid . '"';
+			$usemap = 'pavatar' . $pid;
 
 			$content = preg_replace('|^(<a[^>]+)(>)(<object[^>]+)(>)(</object>)(</a>)|', '$3 usemap="' . $usemap . '" title="&#160;"$4<map ' . $map_id . '><div>$1 shape="rect" coords="0, 0, 80, 80"$2$6</div></map>$5', $content);
 		}
