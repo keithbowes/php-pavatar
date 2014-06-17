@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://fplanque.net/\n"
-"POT-Creation-Date: 2013-12-17 20:08-0500\n"
+"POT-Creation-Date: 2014-06-17 16:40-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,18 +17,38 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../../../_pavatar.plugin.php:40
+#: ../../../_pavatar.plugin.php:43
 msgid "Implements Pavatar support."
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:41
+#: ../../../_pavatar.plugin.php:44
 msgid "Displays Pavatars in your entries and comments without having to mess around with PHP."
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:104
+#: ../../../_pavatar.plugin.php:117
 msgid "Use Gravatar: "
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:107
+#: ../../../_pavatar.plugin.php:120
 msgid "for comment authors who don't have a Pavatar"
+msgstr ""
+
+#: ../../../_pavatar.plugin.php:123
+msgid "Use legacy &lt;img&gt; tag"
+msgstr ""
+
+#: ../../../_pavatar.plugin.php:131
+msgid "XHTML 1.0 Transitional"
+msgstr ""
+
+#: ../../../_pavatar.plugin.php:132
+msgid "XHTML 1.1"
+msgstr ""
+
+#: ../../../_pavatar.plugin.php:133
+msgid "XHTML+RDFa"
+msgstr ""
+
+#: ../../../_pavatar.plugin.php:134
+msgid "HTML5"
 msgstr ""

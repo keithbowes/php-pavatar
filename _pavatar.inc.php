@@ -12,7 +12,7 @@ $_pavatar_mime_type;
 $_pavatar_email;
 $_pavatar_use_gravatar;
 
-$_pavatar_is_ie;
+$_pavatar_use_legacy;
 
 $_pavatar_version;
 $_pavatar_ui_name;
@@ -88,7 +88,7 @@ function _pavatar_getHeaders($url)
 
 function _pavatar_getPavatarCode($url, $content = '')
 {
-	global $_pavatar_is_ie, $_pavatar_mime_type, $_pavatar_use_pavatar;
+	global $_pavatar_mime_type, $_pavatar_use_legacy, $_pavatar_use_pavatar;
 
 	_pavatar_init_cache($url);
 
@@ -100,7 +100,7 @@ function _pavatar_getPavatarCode($url, $content = '')
 
 	$img = '<a href="http://www.pavatar.com/">';
 
-	if (!$_pavatar_is_ie)
+	if (!$_pavatar_use_legacy)
 	{
 		$img .= '<object data="' . $url . '"';
 		
@@ -338,11 +338,9 @@ function _pavatar_getUrlContents($url)
 
 function _pavatar_init()
 {
-	global $_pavatar_cache_dir, $_pavatar_cache_dir, $_pavatar_is_ie;
+	global $_pavatar_cache_dir;
 
 	_pavatar_cleanFiles();
-
-	$_pavatar_is_ie = strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== FALSE;
 	_pavatar_setVersion();
 
 	if (!file_exists($_pavatar_cache_dir . '/pavatar.png'))

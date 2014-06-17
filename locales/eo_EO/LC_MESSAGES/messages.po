@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: b 2e\n"
 "Report-Msgid-Bugs-To: http://fplanque.net/\n"
-"POT-Creation-Date: 2013-12-17 20:08-0500\n"
-"PO-Revision-Date: 2013-12-17 20:09-0500\n"
-"Last-Translator: Keith Bowes <zooplah@users.sourceforge.net>\n"
+"POT-Creation-Date: 2014-06-17 16:40-0400\n"
+"PO-Revision-Date: 2014-06-17 16:42-0400\n"
+"Last-Translator: Keith Bowes <keith@localhost>\n"
 "Language-Team: Esperanto\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -17,18 +17,38 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../_pavatar.plugin.php:40
+#: ../../../_pavatar.plugin.php:43
 msgid "Implements Pavatar support."
-msgstr "Realigas regon de Pavatar."
+msgstr "Efektivigas regon de Pavatar."
 
-#: ../../../_pavatar.plugin.php:41
+#: ../../../_pavatar.plugin.php:44
 msgid "Displays Pavatars in your entries and comments without having to mess around with PHP."
 msgstr "Montras Pavatar-ojn en viaj blogeroj kaj komentoj sen la bezono de PHP-programado."
 
-#: ../../../_pavatar.plugin.php:104
+#: ../../../_pavatar.plugin.php:117
 msgid "Use Gravatar: "
 msgstr "Uzi Gravatar-on: "
 
-#: ../../../_pavatar.plugin.php:107
+#: ../../../_pavatar.plugin.php:120
 msgid "for comment authors who don't have a Pavatar"
 msgstr "por komento-verkistoj, kiuj ne havas Pavatar-on"
+
+#: ../../../_pavatar.plugin.php:123
+msgid "Use legacy &lt;img&gt; tag"
+msgstr "Uzi la malmodernan &lt;img&gt;-etikedon"
+
+#: ../../../_pavatar.plugin.php:131
+msgid "XHTML 1.0 Transitional"
+msgstr "XHTML 1.0 Transira"
+
+#: ../../../_pavatar.plugin.php:132
+msgid "XHTML 1.1"
+msgstr "XHTML 1.1"
+
+#: ../../../_pavatar.plugin.php:133
+msgid "XHTML+RDFa"
+msgstr "XHTML+RDFa"
+
+#: ../../../_pavatar.plugin.php:134
+msgid "HTML5"
+msgstr "HTML5"

@@ -6,12 +6,13 @@ class pavatar_plugin extends Plugin
 {
 	var $code = 'b2evPava';
 
-	var $author = 'http://kechjo.cogia.net/';
-	var $help_url = 'http://pavatar.sourceforge.net/';
+	var $author = 'Keith Bowes';
+	var $help_url = 'http://github.com/keithbowes/pavatar/';
 	var $name = 'Pavatar';
 
 	/* Rendering settings for b2evolution 4 */
 	var $apply_rendering = 'always';
+
 	var $group = 'rendering';
 	var $number_of_installs = 1;
 
@@ -22,7 +23,7 @@ class pavatar_plugin extends Plugin
 
 		global $app_name, $app_version, $baseurl, $cache_subdir,
 			$default_avatar, $_pavatar_base_offset, $_pavatar_cache_dir,
-			$_pavatar_use_gravatar,
+			$_pavatar_use_gravatar, $_pavatar_use_legacy,
 			$_pavatar_version, $_pavatar_ui_name, $_pavatar_ui_version;
 		$_pavatar_base_offset = $baseurl;
 
@@ -30,7 +31,10 @@ class pavatar_plugin extends Plugin
 			$_pavatar_cache_dir = $cache_subdir . 'plugins/pavatar';
 
 		if ($params['is_installed'])
+		{
 			$_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
+			$_pavatar_use_legacy = $this->Settings->get('use_legacy');
+		}
 
 		_pavatar_init();
 		$this->version = $_pavatar_version;
@@ -74,17 +78,36 @@ class pavatar_plugin extends Plugin
 		$content = _pavatar_getPavatarCode($url, $content);
 
 		/* Get around an HTML-correction bug in b2evolution 5+ */
-		global $app_name, $app_version, $_pavatar_is_ie;
-		if (!$_pavatar_is_ie &&
+		global $app_name, $app_version, $_pavatar_use_legacy;
+		if (!$_pavatar_use_legacy &&
 			('b2evolution' == $app_name && version_compare($app_version, '5.0') >= 0))
 		{
 			static $pid = 0;
 			$pid++;
 
-			$map_id = 'id="pavatar' . $pid . '"';
-			$usemap = 'pavatar' . $pid;
+			$std = $this->Settings->get('std');
+			switch ($std)
+			{
+				case 'html5':
+					$itemelem = 'area';
+					$map_id = 'name="pavatar' . $pid . '"';
+					break;
+				default:
+					$itemelem = 'a';
+					$map_id = 'id="pavatar' . $pid . '"';
+			}
 
-			$content = preg_replace('|^(<a[^>]+)(>)(<object[^>]+)(>)(</object>)(</a>)|', '$3 usemap="' . $usemap . '" title="&#160;"$4<map ' . $map_id . '><div>$1 shape="rect" coords="0, 0, 80, 80"$2$6</div></map>$5', $content);
+			switch ($std)
+			{
+				case 'xhtml11':
+				case 'rdfa':
+					$usemap = 'pavatar' . $pid;
+					break;
+				default:
+					$usemap = '#pavatar' . $pid;
+			}
+
+			$content = preg_replace('|^<a([^>]+)>(<object[^>]+)(>)(</object>)</a>|', '$2 usemap="' . $usemap . '" title="&#160;"$3<map ' . $map_id . '><div><' . $itemelem . '$1 shape="rect" coords="0, 0, 80, 80"></' . $itemelem . '></div></map>$4', $content);
 		}
 	}
 
@@ -95,7 +118,24 @@ class pavatar_plugin extends Plugin
 				'label' => $this->T_('Use Gravatar: '),
 				'type' => 'checkbox',
 				'defaultvalue' => 0,
-				'note' => $this->T_('for comment authors who don\'t have a Pavatar'));
+				'note' => $this->T_('for comment authors who don\'t have a Pavatar'),
+		);
+		$ret['use_legacy'] = array(
+			'label' => $this->T_('Use legacy &lt;img&gt; tag'),
+			'type' => 'checkbox',
+			'defaultvalue' => 0,
+		);
+		$ret['std'] = array(
+			'label' => $this->T_('(X)HTML standard to use'),
+			'type' => 'select',
+			'options' => array(
+				'xhtml1' => $this->T_('XHTML 1.0 Transitional'),
+				'xhtml11' => $this->T_('XHTML 1.1'),
+				'rdfa' => $this->T_('XHTML+RDFa'),
+				'html5' => $this->T_('HTML5'),
+			),
+			'defaultvalue' => 'xhtml1',
+		);
 
 		return $ret;
 	}

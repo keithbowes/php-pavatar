@@ -11,7 +11,7 @@
     <p>This PHP library implements <a href="http://www.pavatar.com/">Pavatar</a>, an open specification for a decentralized way of including avatars (user-defined images, such as photos) in web applications.</p>
     <p>Supporting web applications is easy, through a simple <abbr title="Application Programming Interface">API</abbr> or, better yet, creating plugins.  It currently includes plugins for b2evolution and WordPress.</p>
     <p>The current version is @VERSION@.</p>
-    <p>More information: <a href="http://pavatar.sourceforge.net/">http://pavatar.sourceforge.net</a>.</p>
+    <p><a href="http://github.com/keithbowes/pavatar/">More information</a>.</p>
     <h2>Thanks To</h2>
     <ul>
       <li><a href="http://jeenaparadies.net/">Jeena Paradies</a>, author of the Pavatar spec</li>
