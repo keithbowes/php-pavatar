@@ -19,6 +19,7 @@ class pavatar_plugin extends Plugin
 	function PluginInit(& $params)
 	{
 		global $Settings;
+		global $disp;
 		$Settings->set('allow_avatars', false);
 
 		global $app_name, $app_version, $baseurl, $cache_subdir,
@@ -36,7 +37,11 @@ class pavatar_plugin extends Plugin
 			$_pavatar_use_legacy = $this->Settings->get('use_legacy');
 		}
 
-		_pavatar_init();
+		if (isset($disp))
+			_pavatar_init();
+		else
+			_pavatar_setVersion();
+
 		$this->version = $_pavatar_version;
 		$_pavatar_ui_name = $app_name;
 		$_pavatar_ui_version = $app_version;
