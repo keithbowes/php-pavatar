@@ -137,6 +137,7 @@ class pavatar_plugin extends Plugin
 				'xhtml1' => $this->T_('XHTML 1.0 Transitional'),
 				'xhtml11' => $this->T_('XHTML 1.1'),
 				'rdfa' => $this->T_('XHTML+RDFa'),
+				'xhtml2' => $this->T_('XHTML 2.0'),
 				'html5' => $this->T_('HTML5'),
 			),
 			'defaultvalue' => 'xhtml1',

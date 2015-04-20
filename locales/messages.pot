@@ -1,54 +1,62 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Francois PLANQUE
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# pavatar_plugin - Language file
+# Copyright (C) 2015 keith
+# This file is distributed under the same license as the pavatar_plugin package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: http://fplanque.net/\n"
-"POT-Creation-Date: 2014-06-17 16:40-0400\n"
+"Project-Id-Version: pavatar_plugin 0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-04-20 18:15-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../../../_pavatar.plugin.php:43
+#: ../../../_pavatar.plugin.php:49
 msgid "Implements Pavatar support."
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:44
+#: ../../../_pavatar.plugin.php:50
 msgid "Displays Pavatars in your entries and comments without having to mess around with PHP."
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:117
+#: ../../../_pavatar.plugin.php:123
 msgid "Use Gravatar: "
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:120
+#: ../../../_pavatar.plugin.php:126
 msgid "for comment authors who don't have a Pavatar"
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:123
+#: ../../../_pavatar.plugin.php:129
 msgid "Use legacy &lt;img&gt; tag"
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:131
+#: ../../../_pavatar.plugin.php:134
+msgid "(X)HTML standard to use"
+msgstr ""
+
+#: ../../../_pavatar.plugin.php:137
 msgid "XHTML 1.0 Transitional"
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:132
+#: ../../../_pavatar.plugin.php:138
 msgid "XHTML 1.1"
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:133
+#: ../../../_pavatar.plugin.php:139
 msgid "XHTML+RDFa"
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:134
+#: ../../../_pavatar.plugin.php:140
+msgid "XHTML 2.0"
+msgstr ""
+
+#: ../../../_pavatar.plugin.php:141
 msgid "HTML5"
 msgstr ""
