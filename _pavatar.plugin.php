@@ -94,11 +94,15 @@ class pavatar_plugin extends Plugin
 			switch ($std)
 			{
 				case 'html5':
+					$endelem = '';
 					$itemelem = 'area';
+					$itemelemattrs = ' alt=""';
 					$map_id = 'name="pavatar' . $pid . '"';
 					break;
 				default:
+					$endelem = '</a>';
 					$itemelem = 'a';
+					$itemelemattrs = '';
 					$map_id = 'id="pavatar' . $pid . '"';
 			}
 
@@ -112,7 +116,7 @@ class pavatar_plugin extends Plugin
 					$usemap = '#pavatar' . $pid;
 			}
 
-			$content = preg_replace('|^<a([^>]+)>(<object[^>]+)(>)(</object>)</a>|', '$2 usemap="' . $usemap . '" title="&#160;"$3<map ' . $map_id . '><div><' . $itemelem . '$1 shape="rect" coords="0, 0, 80, 80"></' . $itemelem . '></div></map>$4', $content);
+			$content = preg_replace('|^<a([^>]+)>(<object[^>]+)(>)(</object>)</a>|', '$2 usemap="' . $usemap . '" title="&#160;"$3<map ' . $map_id . '><div><' . $itemelem . '$1 shape="rect" coords="0,0,80,80"'. $itemelemattrs . '>' . $endelem . '</div></map>$4', $content);
 		}
 	}
 
