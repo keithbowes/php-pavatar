@@ -19,13 +19,12 @@ class pavatar_plugin extends Plugin
 	function PluginInit(& $params)
 	{
 		global $Settings;
-		global $disp;
-		$Settings->set('allow_avatars', false);
-
-		global $app_name, $app_version, $baseurl, $cache_subdir,
-			$default_avatar, $_pavatar_base_offset, $_pavatar_cache_dir,
+		global $app_name, $app_version, $baseurl, $cache_subdir, $disp;
+		global $_pavatar_base_offset, $_pavatar_cache_dir,
 			$_pavatar_use_gravatar, $_pavatar_use_legacy,
 			$_pavatar_version, $_pavatar_ui_name, $_pavatar_ui_version;
+
+		$Settings->set('allow_avatars', false);
 		$_pavatar_base_offset = $baseurl;
 
 		if (is_dir($cache_subdir . 'plugins'))
@@ -53,39 +52,66 @@ class pavatar_plugin extends Plugin
 	function DisplayItemAsHtml(& $params)
 	{
 		global $_pavatar_email;
-
 		$content =& $params['data'];
-		$item = $params['Item'];
+		$curcom = @$params['Comment'];
+		$item = @$params['Item'];
 
-		$url = $item->get_creator_User()->url;
+		static $comment = -1;
+		if (-1 == $comment)
+		{
+			global $disp;
+			if ('single' == $disp)
+				$comment = 0;
 
-		$_pavatar_email = $item->get_creator_User()->email;
+			if (is_object($item))
+			{
+				$url = $item->get_creator_User()->url;
+				$_pavatar_email = $item->get_creator_User()->email;
+			}
+		}
 
+		if (0 <= $comment && !isset($params['dispmore']))
+		{
+			if (!is_object($curcom))
+			{
+				/* All but stolen from Item::get_latest_Comment */
+				global $DB;
+				$sql = 'SELECT comment_ID FROM T_comments WHERE comment_item_ID = ' .
+					$DB->quote($item->ID) . ' AND comment_type <> \'meta\' AND '.
+					statuses_where_clause( get_inskin_statuses( $item->get_blog_ID(), 'comment' ), 'comment_', $item->get_blog_ID(), 'blog_comment!', true) .
+				' ORDER BY comment_date ASC';
+				$comment_ID = $DB->get_row($sql, OBJECT, $comment)->comment_ID;
+				$curcom = get_CommentCache()->get_by_ID($comment_ID);
+				$comment++;
+			}
+
+			$url = $curcom->author_url;
+			$_pavatar_email = $curcom->author_email;
+
+			if (!$url && $curcom->get_author_user()) // if member
+			{
+				$url = $curcom->get_author_user()->url;
+				$_pavatar_email = $curcom->get_author_user()->email;
+			}
+		}
 		$content = _pavatar_getPavatarCode($url, $content);
 	}
 
 	function FilterCommentContent(& $params)
 	{
-		global $_pavatar_email;
-
-		$content =& $params['data'];
-		$comment = $params['Comment'];
-
-		$url = $comment->author_url;
-		$_pavatar_email = $comment->author_email;
-
-		if (!$url && $comment->get_author_user()) // if member
+		global $app_name, $app_version, $_pavatar_use_legacy;
+		/* DisplayItemAsHtml is automatically called in b2evolution 6.7.2+ */
+		if ('b2evolution' == $app_name && version_compare($app_version, '6.7.2', '<'))
 		{
-			$url = $comment->get_author_user()->url;
-			$_pavatar_email = $comment->get_author_user()->email;
+			$content =& $params['data'];
+			$this->DisplayItemAsHtml($params);
 		}
-
-		$content = _pavatar_getPavatarCode($url, $content);
+		else
+			return parent::FilterCommentContent($params);
 
 		/* Get around an HTML-correction bug in b2evolution 5+ */
-		global $app_name, $app_version, $_pavatar_use_legacy;
 		if (!$_pavatar_use_legacy &&
-			('b2evolution' == $app_name && version_compare($app_version, '5.0') >= 0))
+			('b2evolution' == $app_name && version_compare($app_version, '5.0', '>=')))
 		{
 			static $pid = 0;
 			$pid++;
