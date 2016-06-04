@@ -2,6 +2,7 @@ SHELL = /bin/sh
 
 SRCDIR ?= $(shell $(PHP) -r 'echo getcwd();')
 
+MARKDOWN ?= perl $(shell which Markdown.pl)
 MV ?= mv -f
 PHP ?= php
 
@@ -23,11 +24,14 @@ clean:
 dist zip: all $(ZIPOUT)
 	@$(MV) $(ZIPOUT) ..
 
-README.html: README.html.in _pavatar.inc.php
-	$(call in2out,$@)
+README.html: README.md
+	$(MARKDOWN) $< > $@
 
 pavatar-wordpress.php: _pavatar.inc.php pavatar-wordpress.php.in
 	$(call in2out,$@)
 
 $(ZIPOUT):
 	cd .. && $(ZIP) $(ZIPOUT) $(ZIPIN)
+
+get-version get_version:
+	@echo $(VERSION)
