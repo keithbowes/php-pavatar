@@ -7,42 +7,39 @@ Description: Displays a Pavatar avatar anywhere that get_avatar() is used (conta
 Plugin URI: http://github.com/keithbowes/pavatar
  */
 
-include '_pavatar.inc.php';
+include '_pavatar.class.php';
+
+$pavatar;
+
 
 function _pavatar_wordpress_give_avatar()
 {
-	global $comment, $_pavatar_email;
+	global $comment, $pavatar;
 
 	if ($comment)
 	{
-		$url = get_comment_author_url();
-		$_pavatar_email = get_comment_author_email();
+		$pavatar->author_url = get_comment_author_url();
+		$pavatar->author_email = get_comment_author_email();
 	}
 	else
 	{
-		$url = get_the_author_url();
-		$_pavatar_email = get_the_author_email();
+		$pavatar->author_url = get_the_author_url();
+		$pavatar->author_email = get_the_author_email();
 	}
 
-	return _pavatar_getPavatarCode($url);
+	return $pavatar;
 }
 
 function _pavatar_wordpress_init()
 {
-	global $_pavatar_base_offset, $_pavatar_ui_name,
-		$_pavatar_use_gravatar, $_pavatar_use_legacy,
-		$_pavatar_ui_version, $wp_version;
+	global $_pavatar, $wp_version;
 
-	$_pavatar_base_offset = get_option('siteurl');
-	$_pavatar_ui_name = 'WordPress';
-	$_pavatar_ui_version = $wp_version;
-	$_pavatar_use_gravatar = true;
-	$_pavatar_use_legacy = true;
-
-	_pavatar_init();
+    $pavatar = new Pavatar();
+	$pavatar->base_offset = get_option('siteurl');
+	$pavatar->user_agent['name'] = 'WordPress';
+	$pavatar->user_agent['version'] = $wp_version;
+	$pavatar->use_gravatar = true;
 }
 
 add_action('init', '_pavatar_wordpress_init');
-add_action('wp_footer', '_pavatar_cleanFiles');
-
 add_filter('get_avatar', '_pavatar_wordpress_give_avatar');

@@ -12,7 +12,7 @@ ZIPIN = $(addprefix $(notdir $(SRCDIR))/,_pavatar.inc.php _pavatar.plugin.php pa
 	README.html)
 ZIPOUT = $(SRCDIR)/pavatar-$(VERSION).zip
 
-VERSION = $(shell $(PHP) -r 'include "_pavatar.inc.php"; global $$_pavatar_version; _pavatar_setVersion(); echo $$_pavatar_version;')
+VERSION = $(shell $(PHP) -r 'include "_pavatar.class.php"; echo Pavatar::VERSION;')
 
 in2out = $(PHP) -r "\$$in = file_get_contents('$(1).in'); \$$in = str_replace('@VERSION@', '$(VERSION)', \$$in); \$$fh=fopen('$(1)', 'w');fwrite(\$$fh, \$$in); fclose(\$$fh);"
 

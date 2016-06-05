@@ -1,14 +1,14 @@
 # pavatar_plugin - Language file
-# Copyright (C) 2015 keith
+# Copyright (C) 2016 keith
 # This file is distributed under the same license as the pavatar_plugin package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: pavatar_plugin 0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-20 18:15-0400\n"
+"POT-Creation-Date: 2016-06-05 16:56-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,46 +17,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../../../_pavatar.plugin.php:49
+#: ../../../_pavatar.plugin.php:42
 msgid "Implements Pavatar support."
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:50
+#: ../../../_pavatar.plugin.php:43
 msgid "Displays Pavatars in your entries and comments without having to mess around with PHP."
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:123
+#: ../../../_pavatar.plugin.php:95
 msgid "Use Gravatar: "
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:126
+#: ../../../_pavatar.plugin.php:98
 msgid "for comment authors who don't have a Pavatar"
-msgstr ""
-
-#: ../../../_pavatar.plugin.php:129
-msgid "Use legacy &lt;img&gt; tag"
-msgstr ""
-
-#: ../../../_pavatar.plugin.php:134
-msgid "(X)HTML standard to use"
-msgstr ""
-
-#: ../../../_pavatar.plugin.php:137
-msgid "XHTML 1.0 Transitional"
-msgstr ""
-
-#: ../../../_pavatar.plugin.php:138
-msgid "XHTML 1.1"
-msgstr ""
-
-#: ../../../_pavatar.plugin.php:139
-msgid "XHTML+RDFa"
-msgstr ""
-
-#: ../../../_pavatar.plugin.php:140
-msgid "XHTML 2.0"
-msgstr ""
-
-#: ../../../_pavatar.plugin.php:141
-msgid "HTML5"
 msgstr ""

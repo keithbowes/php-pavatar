@@ -1,6 +1,6 @@
 <?php
 
-include '_pavatar.inc.php';
+include '_pavatar.class.php';
 
 class pavatar_plugin extends Plugin
 {
@@ -10,40 +10,34 @@ class pavatar_plugin extends Plugin
 	var $help_url = 'http://github.com/keithbowes/pavatar/';
 	var $name = 'Pavatar';
 
-	/* Rendering settings for b2evolution 4 */
-	var $apply_rendering = 'always';
-
 	var $group = 'rendering';
 	var $number_of_installs = 1;
+
+	var $pavatar;
 
 	function PluginInit(& $params)
 	{
 		global $Settings;
 		global $app_name, $app_version, $baseurl, $cache_subdir, $disp;
-		global $_pavatar_base_offset, $_pavatar_cache_dir,
-			$_pavatar_use_gravatar, $_pavatar_use_legacy,
-			$_pavatar_version, $_pavatar_ui_name, $_pavatar_ui_version;
 
 		$Settings->set('allow_avatars', false);
-		$_pavatar_base_offset = $baseurl;
 
 		if (is_dir($cache_subdir . 'plugins'))
-			$_pavatar_cache_dir = $cache_subdir . 'plugins/pavatar';
+			$cache_dir = $cache_subdir . 'plugins/pavatar';
+		else
+			$cache_dir = false;
+
+		$this->pavatar = new Pavatar(isset($disp) ? $cache_dir: false);
+		$this->pavatar->base_offset = $baseurl;
 
 		if ($params['is_installed'])
 		{
-			$_pavatar_use_gravatar = $this->Settings->get('use_gravatar');
-			$_pavatar_use_legacy = $this->Settings->get('use_legacy');
+			$this->pavatar->use_gravatar = $this->Settings->get('use_gravatar');
 		}
 
-		if (isset($disp))
-			_pavatar_init();
-		else
-			_pavatar_setVersion();
-
-		$this->version = $_pavatar_version;
-		$_pavatar_ui_name = $app_name;
-		$_pavatar_ui_version = $app_version;
+		$this->version = Pavatar::VERSION;
+		$this->pavatar->user_agent['name'] = $app_name;
+		$this->pavatar->user_agent['version'] = $app_version;
 
 		$this->short_desc = $this->T_('Implements Pavatar support.');
 		$this->long_desc = $this->T_('Displays Pavatars in your entries and comments without having to mess around with PHP.');
@@ -51,10 +45,8 @@ class pavatar_plugin extends Plugin
 
 	function DisplayItemAsHtml(& $params)
 	{
-		global $_pavatar_email;
 		$content =& $params['data'];
-		$curcom = @$params['Comment'];
-		$item = @$params['Item'];
+		$item = $params['Item'];
 
 		static $comment = -1;
 		if (-1 == $comment)
@@ -66,114 +58,46 @@ class pavatar_plugin extends Plugin
 			if (is_object($item))
 			{
 				$url = $item->get_creator_User()->url;
-				$_pavatar_email = $item->get_creator_User()->email;
+				$this->pavatar->email = $item->get_creator_User()->email;
 			}
 		}
 
 		if (0 <= $comment && !isset($params['dispmore']))
 		{
-			if (!is_object($curcom))
-			{
-				/* All but stolen from Item::get_latest_Comment */
-				global $DB;
-				$sql = 'SELECT comment_ID FROM T_comments WHERE comment_item_ID = ' .
-					$DB->quote($item->ID) . ' AND comment_type <> \'meta\' AND '.
-					statuses_where_clause( get_inskin_statuses( $item->get_blog_ID(), 'comment' ), 'comment_', $item->get_blog_ID(), 'blog_comment!', true) .
-				' ORDER BY comment_date ASC';
-				$comment_ID = $DB->get_row($sql, OBJECT, $comment)->comment_ID;
-				$curcom = get_CommentCache()->get_by_ID($comment_ID);
-				$comment++;
-			}
+			/* All but stolen from Item::get_latest_Comment */
+			global $DB;
+			$sql = 'SELECT comment_ID FROM T_comments WHERE comment_item_ID = ' .
+				$DB->quote($item->ID) . ' AND comment_type <> \'meta\' AND '.
+				statuses_where_clause( get_inskin_statuses( $item->get_blog_ID(), 'comment' ), 'comment_', $item->get_blog_ID(), 'blog_comment!', true) .
+			' ORDER BY comment_date ASC';
+			$comment_ID = $DB->get_row($sql, OBJECT, $comment)->comment_ID;
+			$next_comment = get_CommentCache()->get_by_ID($comment_ID);
+			$comment++;
 
-			$url = $curcom->author_url;
-			$_pavatar_email = $curcom->author_email;
+			$url = $next_comment->author_url;
+			$this->pavatar->email = $next_comment->author_email;
 
-			if (!$url && $curcom->get_author_user()) // if member
+			if (!$url && $next_comment->get_author_user()) // if member
 			{
-				$url = $curcom->get_author_user()->url;
-				$_pavatar_email = $curcom->get_author_user()->email;
+				$url = $next_comment->get_author_user()->url;
+				$this->pavatar->email = $next_comment->get_author_user()->email;
 			}
 		}
-		$content = _pavatar_getPavatarCode($url, $content);
-	}
 
-	function FilterCommentContent(& $params)
-	{
-		global $app_name, $app_version, $_pavatar_use_legacy;
-		/* DisplayItemAsHtml is automatically called in b2evolution 6.7.2+ */
-		if ('b2evolution' == $app_name && version_compare($app_version, '6.7.2', '<'))
-		{
-			$content =& $params['data'];
-			$this->DisplayItemAsHtml($params);
-		}
-		else
-			return parent::FilterCommentContent($params);
-
-		/* Get around an HTML-correction bug in b2evolution 5+ */
-		if (!$_pavatar_use_legacy &&
-			('b2evolution' == $app_name && version_compare($app_version, '5.0', '>=')))
-		{
-			static $pid = 0;
-			$pid++;
-
-			$std = $this->Settings->get('std');
-			switch ($std)
-			{
-				case 'html5':
-					$endelem = '';
-					$itemelem = 'area';
-					$itemelemattrs = ' alt=""';
-					$map_id = 'name="pavatar' . $pid . '"';
-					break;
-				default:
-					$endelem = '</a>';
-					$itemelem = 'a';
-					$itemelemattrs = '';
-					$map_id = 'id="pavatar' . $pid . '"';
-			}
-
-			switch ($std)
-			{
-				case 'xhtml11':
-				case 'rdfa':
-					$usemap = 'pavatar' . $pid;
-					break;
-				default:
-					$usemap = '#pavatar' . $pid;
-			}
-
-			$content = preg_replace('|^<a([^>]+)>(<object[^>]+)(>)(</object>)</a>|', '$2 usemap="' . $usemap . '" title="&#160;"$3<map ' . $map_id . '><div><' . $itemelem . '$1 shape="rect" coords="0,0,80,80"'. $itemelemattrs . '>' . $endelem . '</div></map>$4', $content);
-		}
+		$this->pavatar->author_url = $url;
+		$this->pavatar->post_content = $content;
+		$content = $this->pavatar;
 	}
 
 	function GetDefaultSettings(& $params)
 	{
-		/* Using a variable for conditional returns */
-		$ret['use_gravatar'] = array(
+		return array(
+		   'use_gravatar' =>	array(
 				'label' => $this->T_('Use Gravatar: '),
 				'type' => 'checkbox',
 				'defaultvalue' => 0,
 				'note' => $this->T_('for comment authors who don\'t have a Pavatar'),
-		);
-		$ret['use_legacy'] = array(
-			'label' => $this->T_('Use legacy &lt;img&gt; tag'),
-			'type' => 'checkbox',
-			'defaultvalue' => 0,
-		);
-		$ret['std'] = array(
-			'label' => $this->T_('(X)HTML standard to use'),
-			'type' => 'select',
-			'options' => array(
-				'xhtml1' => $this->T_('XHTML 1.0 Transitional'),
-				'xhtml11' => $this->T_('XHTML 1.1'),
-				'rdfa' => $this->T_('XHTML+RDFa'),
-				'xhtml2' => $this->T_('XHTML 2.0'),
-				'html5' => $this->T_('HTML5'),
-			),
-			'defaultvalue' => 'xhtml1',
-		);
-
-		return $ret;
+		));
 	}
 
 	/* Rendering settings for b2evolution 5 */
