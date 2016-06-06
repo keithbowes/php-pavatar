@@ -70,8 +70,8 @@ class Pavatar
 	{
 		$sep = substr($this->url, -1, 1) == '/' ? '' : '/';
 		$this->url = $this->url . $sep . 'pavatar.png';
-		$headers = @get_headers($this->url);
-		return strstr($headers[0], '404') === false;
+		$this->getURLContents('HEAD');
+		return strstr($this->headers[0], '404') === false;
 	}
 
 	/* Should be __destruct, but that causes errors */
@@ -122,22 +122,6 @@ class Pavatar
 		$this->url = $default_pavatar;
 	}
 
-	private function getHeaders()
-	{
-		$headers = @get_headers($this->url);
-		$headerc = count((array) $headers);
-
-		for ($i = 0; $i < $headerc; $i++)
-		{
-			$ci = strpos($headers[$i], ':');
-			$headn = strtolower(substr($headers[$i], 0, $ci));
-			$headv = ltrim(substr($headers[$i], $ci + 1));
-			$this->headers[$headn] = $headv;
-		}
-
-		return $this->headers;
-	}
-
 	private function getImageURL()
 	{
 		$ext = '';
@@ -148,7 +132,7 @@ class Pavatar
 			$this->getPavatarURL();
 			if (!$this->mime_type)
 			{
-				$this->getHeaders($this->url);
+				$this->getURLContents('HEAD');
 				$this->mime_type = @$this->headers['content-type'];
 			}
 
@@ -175,7 +159,7 @@ class Pavatar
 						$this->url = $this->headers['location'];
 					}
 
-					$c = $this->getURLContents($this->url);
+					$c = $this->getURLContents();
 					break;
 				default:
 					$c = $this->url;
@@ -233,7 +217,7 @@ class Pavatar
 
 		if ($this->url)
 		{
-			$this->getHeaders();
+			$this->getURLContents('HEAD');
 			$_url = @$this->headers['x-pavatar'];
 		}
 
@@ -294,15 +278,15 @@ class Pavatar
 				else
 					$port = '';
 
-				$urlp['scheme'] . '://' . $urlp['host'] . $port;
+				$this->url = $urlp['scheme'] . '://' . $urlp['host'] . $port;
 				$this->checkDirectURL();
 			}
 		}
-
-		$this->url = $_url;
+		else
+			$this->url = $_url;
 	}
 
-	private function getURLContents()
+	private function getURLContents($method = 'GET')
 	{
 		$in_headers = true;
 		$ret = '';
@@ -314,7 +298,7 @@ class Pavatar
 		@$fh = fsockopen($urlp['host'], $urlp['port']);
 		if ($fh)
 		{
-			fwrite($fh, 'GET ' . $urlp['path'] . ' HTTP/1.1' . "\r\n");
+			fwrite($fh, $method . ' ' . $urlp['path'] . ' HTTP/1.1' . "\r\n");
 			fwrite($fh, 'Host: ' . $urlp['host'] . "\r\n");
 			fwrite($fh, 'User-Agent: PHP-Pavatar/' . self::VERSION . ' (' . php_uname('s') . ' ' . php_uname('r') . ') ');
 			if (isset($this->user_agent['name']))
@@ -329,13 +313,29 @@ class Pavatar
 
 			while (!feof($fh))
 			{
-				if ($in_headers || !trim($ret))
-					$ret = '';
+				if ('HEAD' == $method)
+				{
+					$r = fgets($fh);
+					if (preg_match('/^([^:]+):\s*(.*)\r\n$/', $r, $matches))
+					{
+						list($full, $name, $value) = $matches;
+						$this->headers[strtolower($name)] = $value;
+					}
+					elseif (!isset($this->headers[0]))
+					{
+						$this->headers[0] = $r;
+					}
+				}
+				else
+				{
+					if ($in_headers || !trim($ret))
+						$ret = '';
 
-				$ret .= fgets($fh);
+					$ret .= fgets($fh);
 
-				if (!trim($ret))
-					$in_headers = false;
+					if (!trim($ret))
+						$in_headers = false;
+				}
 			}
 		}
 		else
