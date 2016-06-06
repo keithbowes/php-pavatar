@@ -53,7 +53,6 @@ class Pavatar
 	public function __toString()
 	{
 		$this->createCacheEntry();
-
 		if ($this->url)
 			$this->getImageURL();
 
@@ -61,7 +60,6 @@ class Pavatar
 			$this->getDefaultPavatar();
 
 		$img = '<a href="https://github.com/pavatar/pavatar/blob/master/Readme.md">';
-
 		$img .= '<object data="' . $this->url . '"';
 		
 		if ($this->mime_type)
@@ -84,7 +82,6 @@ class Pavatar
 	private function cleanCache()
 	{
 		$week_seconds = 7 * 24 * 60 * 60;
-
 		$files = scandir($this->cache_dir);
 		$fc = count($files);
 
@@ -116,16 +113,14 @@ class Pavatar
 
 	private function getDefaultPavatar()
 	{
-		$default_pavatar = $this->base_offset . $this->cache_dir . '/pavatar.png';
+		$this->url = $this->base_offset . $this->cache_dir . '/pavatar.png';
 		$this->mime_type = 'image/png';
 
 		if ($this->use_gravatar)
 		{
-			$default_pavatar = 'http://www.gravatar.com/avatar/' . md5($this->author_email) . '?s=80&amp;d=' . rawurlencode($default_pavatar);
+			$this->url = 'http://www.gravatar.com/avatar/' . md5($this->author_email) . '?s=80&amp;d=' . rawurlencode($default_pavatar);
 			$this->mime_type = '';
 		}
-
-		$this->url = $default_pavatar;
 	}
 
 	private function getImageURL()
@@ -191,7 +186,7 @@ class Pavatar
 
 		if (file_exists($mime_file))
 		{
-			$image_type = file_get_contents($mime_file);
+			$this->mime_type = file_get_contents($mime_file);
 			switch ($image_type)
 			{
 				case 'image/gif':
@@ -205,12 +200,10 @@ class Pavatar
 					break;
 			}
 
-			@$s = file_get_contents($this->cache_file . $ext);
-
-			if ($this->mime_type = $image_type)
+			if ($this->mime_type)
 				$this->url = $this->base_offset . $this->cache_file . $ext;
 			else
-				$this->getPavatarURL($s);
+				$this->getPavatarURL(@file_get_contents($this->cache_file . $ext);
 		}
 
 		$this->show = $this->url != 'none';
@@ -338,7 +331,6 @@ class Pavatar
 						$ret = '';
 
 					$ret .= fgets($fh);
-
 					if (!trim($ret))
 						$in_headers = false;
 				}
