@@ -194,7 +194,7 @@ class Pavatar
 		if (file_exists($mime_file))
 		{
 			$this->mime_type = file_get_contents($mime_file);
-			switch ($image_type)
+			switch ($this->mime_type)
 			{
 				case 'image/gif':
 					$ext = '.gif';
@@ -210,7 +210,7 @@ class Pavatar
 			if ($this->mime_type)
 				$this->url = $this->base_offset . $this->cache_file . $ext;
 			else
-				$this->getPavatarURL(@file_get_contents($this->cache_file . $ext);
+				$this->getPavatarURL(@file_get_contents($this->cache_file . $ext));
 		}
 
 		$this->show = $this->url != 'none';
@@ -303,7 +303,7 @@ class Pavatar
 	 */ 
 	private function getURLContents($method = 'GET')
 	{
-		$in_headers = true;
+		$in_headers = 'HEAD' != $method;
 		$ret = '';
 
 		$urlp = parse_url($this->url);
@@ -328,27 +328,25 @@ class Pavatar
 
 			while (!feof($fh))
 			{
+				if ($in_headers || !trim($ret))
+					$ret = '';
+
+				$r = fgets($fh);
+				$ret .= $r;
+				if (!trim($ret))
+					$in_headers = false;
+
 				if ('HEAD' == $method)
 				{
-					$r = fgets($fh);
 					if (preg_match('/^([^:]+):\s*(.*)\r\n$/', $r, $matches))
 					{
 						list($full, $name, $value) = $matches;
 						$this->headers[strtolower($name)] = $value;
 					}
-					elseif (!isset($this->headers[0]))
+					elseif (3 < strlen($r))
 					{
 						$this->headers[0] = $r;
 					}
-				}
-				else
-				{
-					if ($in_headers || !trim($ret))
-						$ret = '';
-
-					$ret .= fgets($fh);
-					if (!trim($ret))
-						$in_headers = false;
 				}
 			}
 		}

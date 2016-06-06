@@ -34,7 +34,7 @@ If any of that concerns you, you can always check out a previous tag.  0.4.4 is 
 * The constructor can be called with the cache directory (defaulting to the current) or `false` to disable caching.
 * The `$_pavatar_<variable>` variables have been changed to the `Pavatar::$<variable>` properties with a few exceptions:
     * `$_pavatar_cache_dir` has been changed to passing the cache directory to the constructor.
-    * `$_pavatar_email` becomes `Pavatar::author_email`.
+    * `$_pavatar_email` becomes `Pavatar::$author_email`.
     * `$_pavatar_version` becomes `Pavatar::VERSION`.
     * `$_pavatar_ui_name` and `$_pavatar_ui_version` become `Pavatar::$user_agent['name']` and `Pavatar::$user_agent['version']`.
     * `$_pavatar_use_legacy` has been removed.  Legacy HTML code is no longer produced.
