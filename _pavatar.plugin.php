@@ -45,8 +45,8 @@ class pavatar_plugin extends Plugin
 
 	function DisplayItemAsHtml(& $params)
 	{
-		$content =& $params['data'];
 		$item = $params['Item'];
+		$this->pavatar->post_content = $params['data'];
 
 		static $comment = -1;
 		if (-1 == $comment)
@@ -57,8 +57,8 @@ class pavatar_plugin extends Plugin
 
 			if (is_object($item))
 			{
-				$url = $item->get_creator_User()->url;
-				$this->pavatar->email = $item->get_creator_User()->email;
+				$this->pavatar->author_url = $item->get_creator_User()->url;
+				$this->pavatar->author_email = $item->get_creator_User()->email;
 			}
 		}
 
@@ -74,19 +74,19 @@ class pavatar_plugin extends Plugin
 			$next_comment = get_CommentCache()->get_by_ID($comment_ID);
 			$comment++;
 
-			$url = $next_comment->author_url;
-			$this->pavatar->email = $next_comment->author_email;
-
-			if (!$url && $next_comment->get_author_user()) // if member
+			if (is_object($next_comment->get_author_user())) // is a member
 			{
-				$url = $next_comment->get_author_user()->url;
-				$this->pavatar->email = $next_comment->get_author_user()->email;
+				$this->pavatar->author_url = $next_comment->get_author_user()->url;
+				$this->pavatar->author_email = $next_comment->get_author_user()->email;
+			}
+			else
+			{
+				$this->pavatar->author_url = $next_comment->author_url;
+				$this->pavatar->author_email = $next_comment->author_email;
 			}
 		}
 
-		$this->pavatar->author_url = $url;
-		$this->pavatar->post_content = $content;
-		$content = $this->pavatar;
+		$params['data'] = $this->pavatar;
 	}
 
 	function GetDefaultSettings(& $params)

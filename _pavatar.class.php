@@ -38,6 +38,12 @@ class Pavatar
 			copy(dirname(__FILE__) . '/.htaccess', $this->cache_dir . '/.htaccess');
 	}
 
+	function __get($name)
+	{
+		if ('author_url' == $name)
+			return $this->url;
+	}
+
 	function __set($name, $value)
 	{
 		if ('author_url' == $name)
