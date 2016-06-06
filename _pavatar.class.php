@@ -54,7 +54,7 @@ class Pavatar
 		if (strstr($this->mime_type, 'image') === false)
 			$this->getDefaultPavatar();
 
-		$img = '<a href="http://www.pavatar.com/">';
+		$img = '<a href="https://github.com/pavatar/pavatar/blob/master/Readme.md">';
 
 		$img .= '<object data="' . $this->url . '"';
 		
