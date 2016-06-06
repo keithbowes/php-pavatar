@@ -11,7 +11,6 @@ include '_pavatar.class.php';
 
 $pavatar;
 
-
 function _pavatar_wordpress_give_avatar()
 {
 	global $comment, $pavatar;
@@ -34,7 +33,7 @@ function _pavatar_wordpress_init()
 {
 	global $_pavatar, $wp_version;
 
-    $pavatar = new Pavatar();
+	$pavatar = new Pavatar();
 	$pavatar->base_offset = get_option('siteurl');
 	$pavatar->user_agent['name'] = 'WordPress';
 	$pavatar->user_agent['version'] = $wp_version;
@@ -43,3 +42,7 @@ function _pavatar_wordpress_init()
 
 add_action('init', '_pavatar_wordpress_init');
 add_filter('get_avatar', '_pavatar_wordpress_give_avatar');
+
+// vim: noet
+
+?>
