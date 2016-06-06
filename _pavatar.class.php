@@ -6,7 +6,7 @@ class Pavatar
 
 	private $show = true;
 
-	public $cache_dir;
+	private $cache_dir;
 	private $cache_file;
 
 	public $post_content;
@@ -70,6 +70,10 @@ class Pavatar
 		return $img;
 	}
 
+	/* 
+	 * See if there's a pavatar.png in the web site's home directory.
+	 * @return bool Whether there was a pavatar.png.
+	 */
 	private function checkDirectURL()
 	{
 		$sep = substr($this->url, -1, 1) == '/' ? '' : '/';
@@ -123,6 +127,9 @@ class Pavatar
 		}
 	}
 
+	/*
+	 * Get the Pavatar image's URL, either on a remote server or in the cache.
+	 */
 	private function getImageURL()
 	{
 		$ext = '';
@@ -209,6 +216,9 @@ class Pavatar
 		$this->show = $this->url != 'none';
 	}
 
+	/*
+	 * Get the URL of the Pavatar on a remote server
+	 */
 	private function getPavatarURL()
 	{
 		/* Note that indicating the MIME type is an extension. */
@@ -285,6 +295,12 @@ class Pavatar
 			$this->url = $_url;
 	}
 
+	/*
+	 * Get the contents of a URL
+	 * @param string The HTTP method to use.  It should be either GET to get the URL's content or HEAD to get the URL's headers.
+	 * @note If $method is HEAD, Pavatar::headers is populated with an associative array
+	 * @return string The URL's content.
+	 */ 
 	private function getURLContents($method = 'GET')
 	{
 		$in_headers = true;
