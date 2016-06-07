@@ -4,16 +4,16 @@ include '_pavatar.class.php';
 
 class pavatar_plugin extends Plugin
 {
-	var $code = 'b2evPava';
+	public $code = 'b2evPava';
 
-	var $author = 'Keith Bowes';
-	var $help_url = 'http://github.com/keithbowes/pavatar/';
-	var $name = 'Pavatar';
+	public $author = 'Keith Bowes';
+	public $help_url = 'http://github.com/keithbowes/pavatar/';
+	public $name = 'Pavatar';
 
-	var $group = 'rendering';
-	var $number_of_installs = 1;
+	public $group = 'rendering';
+	public $number_of_installs = 1;
 
-	var $pavatar;
+	private $pavatar;
 
 	function PluginInit(& $params)
 	{

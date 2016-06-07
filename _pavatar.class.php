@@ -9,6 +9,7 @@ class Pavatar
 	private $cache_dir;
 	private $cache_file;
 
+	public $author_url;
 	public $post_content;
 	private $url;
 
@@ -38,23 +39,12 @@ class Pavatar
 			copy(dirname(__FILE__) . '/.htaccess', $this->cache_dir . '/.htaccess');
 	}
 
-	function __get($name)
-	{
-		if ('author_url' == $name)
-			return $this->url;
-	}
-
-	function __set($name, $value)
-	{
-		if ('author_url' == $name)
-			$this->url = $value;
-	}
-
 	public function __toString()
 	{
-		$this->createCacheEntry();
-		if ($this->url)
+		if ($this->url = $this->author_url)
 			$this->getImageURL();
+
+		$this->createCacheEntry();
 
 		if (strstr($this->mime_type, 'image') === false)
 			$this->getDefaultPavatar();
@@ -210,7 +200,10 @@ class Pavatar
 			if ($this->mime_type)
 				$this->url = $this->base_offset . $this->cache_file . $ext;
 			else
-				$this->getPavatarURL(@file_get_contents($this->cache_file . $ext));
+			{
+				$this->url = @file_get_contents($this->cache_file . $ext);
+				$this->getPavatarURL();
+			}
 		}
 
 		$this->show = $this->url != 'none';
