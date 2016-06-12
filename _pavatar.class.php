@@ -51,16 +51,16 @@ class Pavatar
 
 		$img = '<a href="https://github.com/pavatar/pavatar/blob/master/Readme.md">';
 		$img .= '<object data="' . $this->url . '"';
-		
+
 		if ($this->mime_type)
 			$img .= ' type="' . $this->mime_type . '"';
-	 
+
 		$img .= ' class="pavatar"></object>';
 		$img .= '</a>' . $this->post_content;
 		return $img;
 	}
 
-	/* 
+	/*
 	 * See if there's a pavatar.png in the web site's home directory.
 	 * @return bool Whether there was a pavatar.png.
 	 */
@@ -293,7 +293,7 @@ class Pavatar
 	 * @param string The HTTP method to use.  It should be either GET to get the URL's content or HEAD to get the URL's headers.
 	 * @note If $method is HEAD, Pavatar::headers is populated with an associative array
 	 * @return string The URL's content.
-	 */ 
+	 */
 	private function getURLContents($method = 'GET')
 	{
 		$in_headers = 'HEAD' != $method;
