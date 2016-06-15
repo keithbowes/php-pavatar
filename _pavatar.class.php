@@ -123,6 +123,7 @@ class Pavatar
 	private function getImageURL()
 	{
 		$ext = '';
+		$this->createCacheEntry();
 		$mime_file = $this->cache_file . '.mime';
 
 		if (!file_exists($mime_file))
