@@ -41,12 +41,14 @@ class Pavatar
 
 	public function __toString()
 	{
+		/* Cache creation will reset the mime_type property,
+		 * so this method must be called before that property is accessed below. */
+		$this->createCacheEntry();
+
 		if ($this->url = $this->author_url)
 			$this->getImageURL();
 
-		$this->createCacheEntry();
-
-		if (strstr($this->mime_type, 'image') === false)
+		if (strpos($this->mime_type, 'image') === FALSE)
 			$this->getDefaultPavatar();
 
 		$img = '<a href="https://github.com/pavatar/pavatar/blob/master/Readme.md">';
@@ -69,7 +71,7 @@ class Pavatar
 		$sep = substr($this->url, -1, 1) == '/' ? '' : '/';
 		$this->url = $this->url . $sep . 'pavatar.png';
 		$this->getURLContents('HEAD');
-		return strstr($this->headers[0], '404') === false;
+		return strpos($this->headers[0], '404') === FALSE;
 	}
 
 	/* Should be __destruct, but that causes errors */
@@ -164,7 +166,9 @@ class Pavatar
 					$c = $this->url;
 			}
 
-			if (!$this->headers || empty($this->headers['content-length']) || @$this->headers['content-length'] > 0)
+			if (!$this->headers)
+				$this->getURLContents('HEAD');
+			if (@$this->headers['content-length'] > 0 && @$this->headers['content-length'] <= 409600)
 			{
 				$f = @fopen($this->cache_file . $ext, 'w');
 				@fwrite($f, $c);
@@ -268,9 +272,6 @@ class Pavatar
 			}
 		}
 
-		if ($_url && !$this->mime_type)
-			$this->mime_type = 'image/png';
-
 		if (!$_url && $this->url)
 		{
 			if (!$this->checkDirectURL())
@@ -299,40 +300,34 @@ class Pavatar
 	{
 		$in_headers = 'HEAD' != $method;
 		$ret = '';
+		$this->headers = array();
 
-		$urlp = parse_url($this->url);
-		if (empty($urlp['port']))
-			$urlp['port'] = 80;
+		$ua = $this->user_agent['name'];
+		if ($uav = $this->user_agent['version'])
+			$ua .= "/$uav";
 
-		@$fh = fsockopen($urlp['host'], $urlp['port']);
-		if ($fh)
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_HEADER, TRUE);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($ch, CURLOPT_URL, $this->url);
+		curl_setopt($ch, CURLOPT_USERAGENT, $ua);
+
+		if (FALSE !== ($page_text = curl_exec($ch)))
 		{
-			fwrite($fh, $method . ' ' . $urlp['path'] . ' HTTP/1.1' . "\r\n");
-			fwrite($fh, 'Host: ' . $urlp['host'] . "\r\n");
-			fwrite($fh, 'User-Agent: PHP-Pavatar/' . self::VERSION . ' (' . php_uname('s') . ' ' . php_uname('r') . ') ');
-			if (isset($this->user_agent['name']))
-			{
-				fwrite($fh, $this->user_agent['name']);
-				if ($this->user_agent['version'])
-					fwrite($fh, '/' . $this->user_agent['version']);
-			}
-			fwrite($fh, "\r\n");
-			fwrite($fh, "Connection: close\r\n");
-			fwrite($fh, "\r\n");
-
-			while (!feof($fh))
+			$page_data = explode(PHP_EOL, $page_text);
+			do
 			{
 				if ($in_headers || !trim($ret))
 					$ret = '';
 
-				$r = fgets($fh);
-				$ret .= $r;
+				$r = current($page_data);
+				$ret .= $r . PHP_EOL;
 				if (!trim($ret))
 					$in_headers = false;
 
 				if ('HEAD' == $method)
 				{
-					if (preg_match('/^([^:]+):\s*(.*)\r\n$/', $r, $matches))
+					if (preg_match('/^([^:]+):\s*(.*)[\r\n]{1,2}$/', $r, $matches))
 					{
 						list($full, $name, $value) = $matches;
 						$this->headers[strtolower($name)] = $value;
@@ -342,14 +337,14 @@ class Pavatar
 						$this->headers[0] = $r;
 					}
 				}
-			}
+			} while(next($page_data));
 		}
 		else
 		{
 			$this->mime_type = 'text/plain';
 		}
 
-		@fclose($fh);
+		@curl_close($ch);
 		return $ret;
 	}
 }

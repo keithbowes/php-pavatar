@@ -41,6 +41,21 @@ class pavatar_plugin extends Plugin
 
 		$this->short_desc = $this->T_('Implements Pavatar support.');
 		$this->long_desc = $this->T_('Displays Pavatars in your entries and comments without having to mess around with PHP.');
+		if (TRUE !== $this->BeforeEnable())
+		{
+			$this->set_status('disabled');
+			return FALSE;
+		}
+	}
+
+	function BeforeEnable()
+	{
+		if (!extension_loaded('curl'))
+		{
+			return $this->T_('This plugin requires the PHP curl extension');
+		}
+
+		return TRUE;
 	}
 
 	function DisplayItemAsHtml(& $params)
