@@ -8,6 +8,7 @@ class Pavatar
 
 	private $cache_dir;
 	private $cache_file;
+	private $enable_cache = TRUE;
 
 	public $author_url;
 	public $post_content;
@@ -25,7 +26,8 @@ class Pavatar
 
 	public function __construct($cache_dir = '')
 	{
-		if ($cache_dir === false)
+		$this->enable_cache = $cache_dir !== FALSE;
+		if (!$this->enable_cache)
 			return;
 
 		$this->cache_dir = $cache_dir;
@@ -93,6 +95,9 @@ class Pavatar
 
 	protected function createCacheEntry()
 	{
+		if (!$this->enable_cache)
+			return;
+
 		if (!$this->cache_dir)
 			$this->cache_dir = '_pavatar_cache';
 		$this->mime_type = '';
@@ -168,7 +173,7 @@ class Pavatar
 
 			if (!$this->headers)
 				$this->getURLContents('HEAD');
-			if (@$this->headers['content-length'] > 0 && @$this->headers['content-length'] <= 409600)
+			if ($this->enable_cache && @$this->headers['content-length'] > 0 && @$this->headers['content-length'] <= 409600)
 			{
 				$f = @fopen($this->cache_file . $ext, 'w');
 				@fwrite($f, $c);
@@ -311,6 +316,11 @@ class Pavatar
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_URL, $this->url);
 		curl_setopt($ch, CURLOPT_USERAGENT, $ua);
+
+		if ($method == 'HEAD')
+			curl_setopt($ch, CURLOPT_NOBODY, TRUE);
+		elseif ($method == 'GET')
+			curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
 
 		if (FALSE !== ($page_text = curl_exec($ch)))
 		{

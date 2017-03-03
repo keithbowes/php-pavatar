@@ -27,7 +27,7 @@ class pavatar_plugin extends Plugin
 		else
 			$cache_dir = false;
 
-		$this->pavatar = new Pavatar(isset($disp) ? $cache_dir: false);
+		$this->pavatar = new Pavatar(isset($disp) ? $cache_dir : FALSE);
 		$this->pavatar->base_offset = $baseurl;
 
 		if ($params['is_installed'])
