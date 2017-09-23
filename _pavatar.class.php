@@ -44,11 +44,14 @@ class Pavatar
 	public function __toString()
 	{
 		/* Cache creation will reset the mime_type property,
-		 * so this method must be called before that property is accessed below. */
+		 * so this method must be called before that property is set below. */
 		$this->createCacheEntry();
 
 		if ($this->url = $this->author_url)
 			$this->getImageURL();
+
+		if (!$this->show)
+			return;
 
 		if (strpos($this->mime_type, 'image') === FALSE)
 			$this->getDefaultPavatar();
@@ -73,7 +76,7 @@ class Pavatar
 		$sep = substr($this->url, -1, 1) == '/' ? '' : '/';
 		$this->url = $this->url . $sep . 'pavatar.png';
 		$this->getURLContents('HEAD');
-		return strpos($this->headers[0], '404') === FALSE;
+		return (count($this->headers)) ? strpos($this->headers[0], '404') === FALSE : FALSE;
 	}
 
 	/* Should be __destruct, but that causes errors */
