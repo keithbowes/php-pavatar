@@ -2,6 +2,7 @@
 
 class Pavatar
 {
+	const PAVATAR_MAX_SIZE = 409600;
 	const VERSION = '0.5';
 
 	private $show = true;
@@ -58,7 +59,7 @@ class Pavatar
 
 		$img = '<a href="https://github.com/pavatar/pavatar/blob/master/Readme.md">';
 		$img .= '<img alt="" src="' . $this->url . '"';
-		$img .= ' class="pavatar" />';
+		$img .= ' height="80" width="80" class="pavatar" />';
 		$img .= '</a>' . $this->post_content;
 		return $img;
 	}
@@ -172,7 +173,7 @@ class Pavatar
 
 			if (!$this->headers)
 				$this->getURLContents('HEAD');
-			if ($this->enable_cache && @$this->headers['content-length'] > 0 && @$this->headers['content-length'] <= 409600)
+			if ($this->enable_cache && @$this->headers['content-length'] > 0 && @$this->headers['content-length'] <= self::PAVATAR_MAX_SIZE)
 			{
 				$f = @fopen($this->cache_file . $ext, 'w');
 				@fwrite($f, $c);
@@ -215,7 +216,7 @@ class Pavatar
 			}
 		}
 
-		$this->show = $this->url != 'none';
+		$this->show = ($this->url != 'none') && (@$this->headers['content-length'] <= self::PAVATAR_MAX_SIZE);
 	}
 
 	/*
