@@ -57,12 +57,8 @@ class Pavatar
 			$this->getDefaultPavatar();
 
 		$img = '<a href="https://github.com/pavatar/pavatar/blob/master/Readme.md">';
-		$img .= '<object data="' . $this->url . '"';
-
-		if ($this->mime_type)
-			$img .= ' type="' . $this->mime_type . '"';
-
-		$img .= ' class="pavatar"></object>';
+		$img .= '<img alt="" src="' . $this->url . '"';
+		$img .= ' class="pavatar" />';
 		$img .= '</a>' . $this->post_content;
 		return $img;
 	}

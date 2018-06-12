@@ -20,7 +20,8 @@ class pavatar_plugin extends Plugin
 		global $Settings;
 		global $app_name, $app_version, $baseurl, $cache_subdir, $disp;
 
-		$Settings->set('allow_avatars', false);
+		if (is_object($Settings))
+			$Settings->set('allow_avatars', false);
 
 		if (is_dir($cache_subdir . 'plugins'))
 			$cache_dir = $cache_subdir . 'plugins/pavatar';
