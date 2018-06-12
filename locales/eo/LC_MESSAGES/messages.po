@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: b 2e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-20 22:57-0500\n"
-"PO-Revision-Date: 2017-02-20 22:59-0500\n"
+"POT-Creation-Date: 2018-06-12 16:04-0400\n"
+"PO-Revision-Date: 2018-06-12 16:04-0400\n"
 "Last-Translator: Keith Bowes <keith@localhost>\n"
 "Language-Team: Esperanto\n"
 "Language: eo\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../_pavatar.plugin.php:42
+#: ../../../_pavatar.plugin.php:43
 msgid "Implements Pavatar support."
 msgstr "Efektivigas regon de Pavatar."
 
-#: ../../../_pavatar.plugin.php:43
+#: ../../../_pavatar.plugin.php:44
 msgid "Displays Pavatars in your entries and comments without having to mess around with PHP."
 msgstr "Montras Pavatar-ojn en viaj blogeroj kaj komentoj sen la bezono de PHP-programado."
 
-#: ../../../_pavatar.plugin.php:50
+#: ../../../_pavatar.plugin.php:56
 msgid "This plugin requires the PHP curl extension"
 msgstr "La kromprogramo postulas la PHP-etandaĵon curl"
 
-#: ../../../_pavatar.plugin.php:104
+#: ../../../_pavatar.plugin.php:112
 msgid "Use Gravatar: "
 msgstr "Uzi Gravatar-on: "
 
-#: ../../../_pavatar.plugin.php:107
+#: ../../../_pavatar.plugin.php:115
 msgid "for comment authors who don't have a Pavatar"
 msgstr "por komento-verkistoj, kiuj ne havas Pavatar-on"

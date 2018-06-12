@@ -1,14 +1,14 @@
 # pavatar_plugin - Language file
-# Copyright (C) 2017 Keith Bowes
+# Copyright (C) 2018 Keith
 # This file is distributed under the same license as the pavatar_plugin package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: pavatar_plugin 0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-20 22:57-0500\n"
+"POT-Creation-Date: 2018-06-12 16:04-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../../../_pavatar.plugin.php:42
+#: ../../../_pavatar.plugin.php:43
 msgid "Implements Pavatar support."
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:43
+#: ../../../_pavatar.plugin.php:44
 msgid "Displays Pavatars in your entries and comments without having to mess around with PHP."
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:50
+#: ../../../_pavatar.plugin.php:56
 msgid "This plugin requires the PHP curl extension"
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:104
+#: ../../../_pavatar.plugin.php:112
 msgid "Use Gravatar: "
 msgstr ""
 
-#: ../../../_pavatar.plugin.php:107
+#: ../../../_pavatar.plugin.php:115
 msgid "for comment authors who don't have a Pavatar"
 msgstr ""
